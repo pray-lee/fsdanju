@@ -1,0 +1,61 @@
+<view class="app">
+    <view class="jiekuan-container">
+        <view class="jiekuan-content">
+            <view class="title">我的单据</view>
+            <view class="completed-bill" bindtap="goList" data-type="complete">查看已完成单据</view>
+            <view class="main" tt:if="{{list.length}}">
+                <view class="main-item" tt:for="{{list}}" tt:key="index" bindtap="goToEdit" data-type="{{item.billType}}" data-id="{{item.id}}" data-status="{{item.status}}">
+                    <view class="content">
+                        <view class="left status error {{item.billType.toLowerCase()}}">
+                            <text>{{statusObj[item.status] || '审批状态'}}</text>
+                        </view>
+                        <text class="right" tt:if="{{item.totalAmount}}">￥{{item.formatTotalAmount || '0.00'}}</text>
+                        <text class="right" tt:else>￥{{item.formatAmount || '0.00'}}</text>
+                    </view>
+                    <view class="content">
+                        <text class="left">{{item.remark || '[无事由]'}}</text>
+                    </view>
+                    <view class="content content-bottom">
+                        <text class="left">{{item.billName}}</text>
+                        <text class="right">{{item.billCode || item.invoicebillCode}}</text>
+                    </view>
+                </view>
+                <view class="go-list" bindtap="goList" data-type="all">查看全部</view>
+            </view>
+            <view tt:else>
+                <view class="a-error-view-wrapper error-index">
+                    <image class="a-error-view-pic" src="../../images/error-view/empty.png"/>
+                    <view class="a-error-view-title">暂无未完成单据</view>
+                </view>
+            </view>
+        </view>
+    </view>
+    <view class="btn-area-wrapper {{isPhoneXSeries ? 'iphoneX' : ''}}">
+        <view class="add-btn" bindtap="onAddShow">
+            新增单据
+        </view>
+    </view>
+    
+    <view class="add-page" animation="{{animationInfo}}">
+        <view class="title">单据类别</view>
+        <view class="add-page-wrapper">
+            <view class="add-item J" bindtap="onShowAddJiekuan">
+                
+                <view>借款单</view>
+            </view>
+            <view class="add-item B" bindtap="onShowAddBaoxiao">
+                
+                <view>报销单</view>
+            </view>
+            <view class="add-item K" bindtap="onShowAddKaipiao">
+                
+                <view>开票申请单</view>
+            </view>
+            <view class="add-item F" bindtap="onShowAddFukuan">
+                
+                <view>付款申请单</view>
+            </view>
+        </view>
+    </view>
+    <view class="mask" hidden="{{maskHidden}}" bindtap="onAddHide"/>
+</view>

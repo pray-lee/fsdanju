@@ -1,0 +1,92 @@
+@import '../components/errorView/index.ttss';
+.baoxiao-container, .jiekuan-container{
+  padding: 40rpx;
+  background:#fff;
+  margin:0px auto;
+  border-radius: 10rpx;
+  box-shadow: 0 2px 20px 0 rgba(0,0,0,0.20);
+  margin: 40rpx
+}
+.title{
+  line-height: 48rpx;
+  margin-bottom: 10rpx;
+  font-size: 30rpx;
+  padding:20rpx 0;
+  font-weight: 600
+}
+.add-page .title{
+  font-size: 30rpx;
+  line-height: 48rpx;
+  font-weight:600;
+  padding-top:0;
+  margin-bottom:20rpx !important;
+  border-bottom: 1px solid #f1f1f1
+}
+.completed-bill{
+  font-size: 26rpx;
+  padding: 20rpx;
+  margin: 10rpx 0;
+  border-radius: 6rpx;
+  background:#3276c3;
+  color:#fff;
+}
+.main-item {
+    padding-top: 45rpx
+}
+.list-btn-area{
+  display:flex;
+  justify-content: space-around;
+  border-top: 1px solid #ddd;
+  padding: -20rpx;
+  padding-top: 30rpx;
+}
+.list-btn-area > .btn-content{
+  display:flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 207rpx;
+  font-size: 22rpx
+}
+.line{
+  width: 1px;
+  height: 82rpx;
+  background:#ddd;
+  margin-top: 20rpx
+}
+.img{
+  margin-bottom: 20rpx
+}
+.img:nth-of-type(1) {
+  width: 55rpx;
+  height: 55rpx
+}
+.img:nth-of-type(2) {
+  width: 49rpx;
+  height: 64rpx
+}
+.img:nth-of-type(3) {
+  width: 56rpx;
+  height: 59rpx
+}
+.content{
+  padding: 8rpx 0
+}
+.content-bottom{
+  justify-content: flex-start;
+  font-weight:normal;
+  color:#666;
+}
+.content-bottom .right{
+  margin-left: 30rpx;
+}
+.go-list{
+  padding-top:50rpx;
+  font-size:25rpx;
+  text-align:center;
+  color:rgb(50, 118, 195);
+}
+.error-index{
+  padding-top:15rpx
+}
+

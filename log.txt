@@ -1,0 +1,10 @@
+[WARN] 发现已存在输出目录，将强制覆盖
+[WARN] pages\express\index.wxml 文件中发现飞书小程序不支持的组件: movable-area，请参考对应小程序文档完成适配
+[WARN] pages\express\index.wxml 文件中发现飞书小程序不支持的组件: movable-view，请参考对应小程序文档完成适配
+[WARN] pages\index\index.js 文件中发现暂不支持的 API: qy，仅更换前缀，请参考微信小程序文档完成适配
+[WARN] pages\list\index.wxml 文件中发现飞书小程序不支持的组件: movable-area，请参考对应小程序文档完成适配
+[WARN] pages\list\index.wxml 文件中发现飞书小程序不支持的组件: movable-view，请参考对应小程序文档完成适配
+[WARN] pages\uploadPage\index.js 文件中发现暂不支持的 API: createWebViewContext，仅更换前缀，请参考微信小程序文档完成适配
+[WARN] pages\uploadPage\index.js 文件中发现暂不支持的 API: httpRequest，仅更换前缀，请参考微信小程序文档完成适配
+[WARN] util\getErrorMessage.js 文件中发现暂不支持的 API: getAuthCode，仅更换前缀，请参考微信小程序文档完成适配
+[WARN] util\getErrorMessage.js 文件中发现暂不支持的 API: httpRequest，仅更换前缀，请参考微信小程序文档完成适配
