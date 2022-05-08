@@ -6,7 +6,7 @@
             <view class="main" tt:if="{{list.length}}">
                 <view class="main-item" tt:for="{{list}}" tt:key="index" bindtap="goToEdit" data-type="{{item.billType}}" data-id="{{item.id}}" data-status="{{item.status}}">
                     <view class="content">
-                        <view class="left status error {{item.billType.toLowerCase()}}">
+                        <view class="left status error {{item.lowerCaseBillType}}">
                             <text>{{statusObj[item.status] || '审批状态'}}</text>
                         </view>
                         <text class="right" tt:if="{{item.totalAmount}}">￥{{item.formatTotalAmount || '0.00'}}</text>

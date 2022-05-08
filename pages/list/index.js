@@ -85,7 +85,7 @@ Page({
 
     that.setData({
       list: that.data.list,
-      filterList: this.data.list
+      filterList: that.data.filterList
     });
   },
 
@@ -146,8 +146,6 @@ Page({
         isComplete: false
       });
     }
-
-    console.log(this.data, '/////////');
   },
 
   getListByListStatus() {
@@ -369,6 +367,7 @@ Page({
           resolve({
             list: res.data.rows.map(item => ({ ...item,
               billType: 'J',
+              lowerCaseBillType: 'j',
               billName: '借款单'
             }))
           });
@@ -390,6 +389,7 @@ Page({
             type: 'B',
             list: res.data.rows.map(item => ({ ...item,
               billType: 'B',
+              lowerCaseBillType: 'b',
               billName: '报销单'
             }))
           });
@@ -411,6 +411,7 @@ Page({
             type: 'K',
             list: res.data.rows.map(item => ({ ...item,
               billType: 'K',
+              lowerCaseBillType: 'k',
               billName: '开票申请单'
             }))
           });
@@ -430,6 +431,7 @@ Page({
           resolve({
             list: res.data.rows.map(item => ({ ...item,
               billType: 'F',
+              lowerCaseBillType: 'f',
               billName: '付款申请单'
             }))
           });

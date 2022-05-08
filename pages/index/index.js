@@ -176,6 +176,7 @@ Page({
                                         list: item.list.map(list => ({
                                             ...list,
                                             billType: item.type,
+                                            lowerCaseBillType: item.type.toLowerCase(),
                                             billName: item.name
                                         }))
                                     })); // 合并四种单子
