@@ -1,4 +1,5 @@
 import moment from "moment";
+import '../../util/handleLodash'
 import { cloneDeep as clone } from 'lodash';
 import { getErrorMessage, submitSuccess, formatNumber, validFn, request } from "../../util/getErrorMessage";
 var app = getApp();
@@ -53,6 +54,9 @@ Page({
     tempImportList: []
   },
 
+  onClick() {
+
+  },
   // 把fukuanList的数据，重组一下，拼在submitData里提交
   formatSubmitData(array, name) {
     array.forEach((item, index) => {

@@ -660,8 +660,8 @@ Page({
       success: res => {
         console.log(res);
         if (res.data.success && res.data.obj.length) {
-          var accountbookIndex = 0;
-          var accountbookId = !!data ? data.accountbookId : res.data.obj[0].id; // edit的时候设置值
+          var accountbookIndex = 4;
+          var accountbookId = !!data ? data.accountbookId : res.data.obj[4].id; // edit的时候设置值
 
           if (accountbookId) {
             res.data.obj.forEach((item, index) => {

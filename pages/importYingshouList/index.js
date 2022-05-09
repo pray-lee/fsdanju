@@ -1,4 +1,5 @@
 import moment from 'moment';
+import '../../util/handleLodash'
 import { cloneDeep as clone } from 'lodash';
 import { formatNumber } from "../../util/getErrorMessage";
 const app = getApp();
@@ -20,7 +21,7 @@ Page({
     let tempImportList = tt.getStorageSync('tempImportList');
     console.log(tempImportList, 'tempImportList'); // 每一项加一个checked属性
 
-    tempImportList.forEach(item => {
+    tempImportList && tempImportList.forEach(item => {
       item.checked = false;
       item.businessDateTime = item.businessDateTime.split(' ')[0];
       item.formatUnverifyAmount = formatNumber(Number(item.unverifyAmount).toFixed(2));

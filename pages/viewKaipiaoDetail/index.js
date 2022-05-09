@@ -1,3 +1,4 @@
+import '../../util/handleLodash'
 import { cloneDeep as clone } from "lodash";
 const app = getApp();
 Page({

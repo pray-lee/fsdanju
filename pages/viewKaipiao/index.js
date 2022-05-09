@@ -1,3 +1,4 @@
+import '../../util/handleLodash'
 import { cloneDeep as clone } from "lodash";
 import { formatNumber, request } from "../../util/getErrorMessage";
 var app = getApp();
