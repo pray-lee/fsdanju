@@ -78,18 +78,19 @@ const login = app => {
 };
 
 const request = option => {
-  // const sessionId = tt.getStorageSync('sessionId');
-    const db = tt.getStorageSync('db')
+  const sessionId = tt.getStorageSync('sessionId');
+  const db = tt.getStorageSync('db')
   tt.request({
-    url: option.url,
+    url: option.url + '&db='+db,
     dataType: 'json',
     data: option.data,
     header: {
-      'cookie': 'db=' + db,
+      'Cookie': sessionId,
       'content-type': 'application/x-www-form-urlencoded'
     },
     method: option.method,
     success: res => {
+      console.log(db, 'db requset')
       if (typeof res.data !== 'string' || res.data.indexOf('主框架') === -1) {
         option.success(res);
       } else {
