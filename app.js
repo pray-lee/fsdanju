@@ -22,8 +22,16 @@ App({
     // appId: 'cli_a28eda58bd78d00c',
     // tenantCode: 'db_ck_saas_v1_test',
     // 雅学院
+    // url: 'https://www.caika.net/caika/',
+    // appId: 'cli_a2b866ef0639900d',
+    // tenantCode: 'db_ck_wenhua2021',
+    // goski
     url: 'https://www.caika.net/caika/',
-    appId: 'cli_a2b866ef0639900d',
-    tenantCode: 'db_ck_wenhua2021',
+    appId: 'cli_a209d304ca799013',
+    tenantCode: 'db_ck_goski',
+
   }
 });
+// vud0lKenArwgwr0ojKxOJbt2V13h17TY
+// bIy2ZRiezhogd25Qeg3D6b0pRkSNv2Oh
+// https://www.caika.net/caika/feishuController/callBack.do

@@ -151,6 +151,7 @@ Page({
 
     onShow() {
         this.addLoading();
+        tt.setStorageSync('db', app.globalData.tenantCode);
         tt.login({
             success: res => {
                 this.hideLoading();
@@ -164,7 +165,6 @@ Page({
                             if (res.data.obj) {
                                 console.log(res.cookies, 'res login')
                                 // session写入缓存
-                                tt.setStorageSync('db', app.globalData.tenantCode);
                                 tt.setStorageSync('sessionId', res.cookies[0]);
                                 tt.setStorageSync('realName', res.data.obj.realName);
                                 tt.setStorageSync('applicantId', res.data.obj.id);
