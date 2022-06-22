@@ -163,9 +163,10 @@ Page({
                     success: res => {
                         if (res.data.success) {
                             if (res.data.obj) {
-                                console.log(res.cookies, 'res login')
+                                console.log(res)
+                                const cookies = res.cookies ? res.cookies[0] : res.header['Set-Cookie']
                                 // session写入缓存
-                                tt.setStorageSync('sessionId', res.cookies[0]);
+                                tt.setStorageSync('sessionId', cookies);
                                 tt.setStorageSync('realName', res.data.obj.realName);
                                 tt.setStorageSync('applicantId', res.data.obj.id);
                                 app.globalData.realName = res.data.obj.realName;
