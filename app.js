@@ -26,7 +26,7 @@ App({
     // appId: 'cli_a2b866ef0639900d',
     // tenantCode: 'db_ck_wenhua2021',
     // goski
-    url: 'https://www.caika.net/caika/',
+    url: 'https://www.caika.net/saas/',
     appId: 'cli_a209d304ca799013',
     tenantCode: 'db_ck_goski',
 
