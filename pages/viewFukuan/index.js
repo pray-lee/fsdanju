@@ -58,16 +58,16 @@ Page({
 
   previewFile(e) {
     var url = e.currentTarget.dataset.url
-    wx.previewImage({
+    tt.previewImage({
       urls: [url],
     })
   },
   getDetail(query) {
     if(app.globalData.isWxWork) {
-      const sessionId = wx.getStorageSync('sessionId')
+      const sessionId = tt.getStorageSync('sessionId')
       if(!sessionId) {
         this.addLoading()
-        wx.qy.login({
+        tt.qy.login({
           success: res => {
             this.hideLoading()
             this.addLoading()
@@ -95,12 +95,12 @@ Page({
           fail: res => {
             this.hideLoading()
             console.log(res ,'获取授权码失败')
-            wx.showModal({
+            tt.showModal({
               content: '当前组织没有该小程序',
               confirmText: '好的',
               showCancel: false,
               success: res => {
-                wx.reLaunch({
+                tt.reLaunch({
                   url: '/pages/error/index'
                 })
               }
@@ -327,7 +327,7 @@ Page({
         approveResult: type === 'reject' ? 0 : 1
       }
     })
-    var animation = wx.createAnimation({
+    var animation = tt.createAnimation({
       duration: 250,
       timeFunction: 'ease-in'
     })
@@ -346,7 +346,7 @@ Page({
       comment: '',
       processInstanceId: ''
     })
-    var animation = wx.createAnimation({
+    var animation = tt.createAnimation({
       duration: 250,
       timeFunction: 'ease-in'
     })
@@ -394,12 +394,12 @@ Page({
           if(this.data.query.isNotification) {
             this.onLoad(this.data.query)
           }else{
-            wx.navigateBack({
+            tt.navigateBack({
               delta: 1
             })
           }
         }else{
-          wx.showModal({
+          tt.showModal({
             content: res.data.msg,
             confirmText: '确定',
             showCancel: false,

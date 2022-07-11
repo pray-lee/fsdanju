@@ -1,11 +1,22 @@
 const app = getApp();
 Page({
   data: {
-    tempImportList: []
+    tempImportList: [],
+    amountField: {
+      unverifyAmount: 'unverifyAmount'
+    }
   },
 
   onLoad() {
     const tempImportList = tt.getStorageSync('tempImportList');
+    const multiCurrency = tt.getStorageSync('multiCurrency')
+    if(multiCurrency) {
+      this.setData({
+        amountField: {
+          unverifyAmount: 'originUnverifyAmount'
+        }
+      })
+    }
     tempImportList.forEach(item => {
       item.dataString = JSON.stringify(item);
     });
@@ -28,7 +39,7 @@ Page({
     for (let i = 0; i < arr.length; i++) {
       var temp = { ...arr[i],
         billDetailId: arr[i].id,
-        applicationAmount: arr[i].unverifyAmount,
+        applicationAmount: arr[i][this.data.amountField.unverifyAmount],
         remark: arr[i].remark
       };
       newArr.push(temp);
