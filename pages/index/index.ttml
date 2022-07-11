@@ -30,6 +30,7 @@
             </view>
         </view>
     </view>
+    <view tt:if="{{oaList.length}}" bindtap="gotoOaList" class="undo-entry">待办事项<text style="color:#00c458;padding-left: 30rpx;">{{oaList.length}}</text></view>
     <view class="btn-area-wrapper {{isPhoneXSeries ? 'iphoneX' : ''}}">
         <view class="add-btn" bindtap="onAddShow">
             新增单据

@@ -6,6 +6,18 @@ var app = getApp();
 app.globalData.loadingCount = 0;
 Page({
   data: {
+    // =============审批流相关============
+    oaModule: null,
+    showOaUserNodeList: false,
+    showOa: false,
+    nodeList: [],
+    nodeIndex: null,
+    deptList: [],
+    // 这个是"查看更多"点进去显示的当前审批节点的用户
+    selectedUserList: [],
+    animationInfo1: {},
+    historyOaList: [],
+    // =================================
     isPhoneXSeries: false,
     process: null,
     type: '',
@@ -28,6 +40,7 @@ Page({
     borrowList: [],
     incomeBankIndex: 0,
     incomeBankList: [],
+    numberPattern: /^(\+)?\d+(\.\d+)?$/,
     // 资金计划列表
     capitalTypeIndex: 0,
     applicantIndex: 0,
@@ -100,6 +113,16 @@ Page({
   },
 
   formSubmit(e) {
+    // ==================处理审批流数据==================
+    if(this.data.nodeList.length) {
+      this.setData({
+        submitData: {
+          ...this.data.submitData,
+          oaBillUserNodeListJson: JSON.stringify(this.data.nodeList)
+        }
+      })
+    }
+    // ==================处理审批流数据==================
     const status = e.currentTarget.dataset.status;
     this.setData({
       submitData: { ...this.data.submitData,
@@ -195,6 +218,12 @@ Page({
           applicantType: 10
         }
       });
+      // ============ 审批流 =========
+      this.setData({
+        oaModule: this.findAccountbookOaModule(this.data[listName][value], this.data.accountbookList)
+      })
+      this.showOaProcessByBillType(this.data[listName][value], 4)
+      // ============ 审批流 =========
       this.getDepartmentList(this.data[listName][value].id);
       this.getBorrowBillList(this.data[listName][value].id, 10, null, null, true);
       this.isCapitalTypeStart(this.data[listName][value].id);
@@ -403,6 +432,7 @@ Page({
   },
 
   onShow() {
+    this.getSelectedUserListFromStorage()
     this.getAuxptyIdFromStorage();
     this.getBorrowIdFromStorage();
     this.getSubjectIdFromStorage();
@@ -420,6 +450,18 @@ Page({
 
   bindKeyInput(e) {
     console.log(e); // 借款详情
+    if(!!this.data.validT) {
+      clearTimeout(this.data.validT)
+    }
+    this.data.validT = setTimeout(() => {
+      if(!/^(\+)?\d+(\.\d+)?$/.test(e.detail.value)) {
+        tt.showToast({
+          title: '请输入正确的数字',
+          icon: 'none',
+        });
+        return
+      }
+    }, 300)
 
     if (e.currentTarget.dataset.type === 'borrowAmount') {
       this.setData({
@@ -469,6 +511,7 @@ Page({
         formatAmount: formatNumber(Number(this.data.submitData.amount) - Number(borrowAmount))
       }
     });
+    this.showOaUserNodeListUseField(['accountbookId', 'submitterDepartmentId', 'billDetailListObj'])
   },
 
   deleteFile(e) {
@@ -529,6 +572,7 @@ Page({
         formatAmount: formatNumber(Number(amount).toFixed(2))
       }
     });
+    this.showOaUserNodeListUseField(['accountbookId', 'submitterDepartmentId', 'billDetailListObj'])
     this.onAddHide();
   },
 
@@ -647,8 +691,369 @@ Page({
     if (type === 'edit') {
       // 渲染
       this.getEditData(id);
+      // oa=============================
+      this.getHistoryOaList(query)
+      // oa=============================
     }
   },
+  // =============================================================================
+  getHistoryOaList(query) {
+    this.addLoading()
+    request({
+      hideLoading: this.hideLoading,
+      url: app.globalData.url + 'oaController.do?lastActivityNodeList&billId=' + query.id,
+      method: 'GET',
+      success: res => {
+        if(res.statusCode === 200) {
+          const historyOaList = this.handleData(res.data)
+          this.setData({
+            historyOaList: historyOaList.map(item => ({...item, showUserList: false, showAssigneeName: item.assigneeName.slice(-2)}))
+          })
+          console.log(this.data.historyOaList)
+        }
+      }
+    })
+  },
+  toggleHistoryList(e) {
+    const index = e.currentTarget.dataset.index
+    this.data.historyOaList[index].showUserList = !this.data.historyOaList[index].showUserList
+    this.setData({
+      historyOaList: this.data.historyOaList
+    })
+  },
+  handleData(sourceArr) {
+    var arr = [];
+    if (sourceArr.length == 0 || sourceArr == undefined) {
+      return arr;
+    }
+    //给数组添加排序编号
+    for (var i = 0; i < sourceArr.length; i++) {
+      sourceArr[i].no = i;
+    }
+    //根据下标排序
+    var compare = function (property) {
+      return function (a, b) {
+        var value1 = a[property];
+        var value2 = b[property];
+        return value1 - value2;
+      }
+    }
+    //获取对应数据
+    var getSourceArr = function (sourceArr, removeArr) {
+      if (removeArr.length == 0) {
+        return;
+      }
+      var index = 0;
+      //循环删除数据
+      for (var i = 0; i < removeArr.length; i++) {
+        var deindex = removeArr[i] - index;
+        sourceArr.splice(deindex, 1);
+        index++;
+      }
+    }
+    //获取status=2的数据
+    var status2 = [];
+    var removeArr = [];
+    for (var i = 0; i < sourceArr.length; i++) {
+      var json = sourceArr[i];
+      if (json.status == 2 && json.activityType == 'userTask') {
+        status2.push(json);
+        removeArr.push(i);
+      }
+    }
+    //删除statues=2
+    getSourceArr(sourceArr, removeArr);
+    //构建剩余数据构建有相同的activityId
+    var otherStatus = [];
+    var tempArr = [];
+    for (var i = 0; i < sourceArr.length; i++) {
+      var json = sourceArr[i];
+      if (tempArr.indexOf(json.activityId) == -1) {
+        //先做成简单的对象，可以扩展对象属性
+        otherStatus.push({
+          activityId: json.activityId,
+          activityName: json.activityName,
+          activityType: json.activityType,
+          signType: json.signType,
+          children: [json],
+          no: json.no,
+          status: json.status
+        });
+        tempArr.push(json.activityId);
+      } else {
+        for (var j = 0; j < otherStatus.length; j++) {
+          var other = otherStatus[j];
+          if (json.activityId == other.activityId) {
+            otherStatus[j].children.push(json);
+          }
+        }
+      }
+    }
+    var sameArr = [];
+    var onlyArr = [];
+    //拆开有children的和无children的
+    for (var i = 0; i < otherStatus.length; i++) {
+      let json = otherStatus[i];
+      if (json.children.length == 1) {
+        onlyArr.push(json.children[0]);
+      } else {
+        sameArr.push(json);
+      }
+    }
+    //拼接数组
+    arr = status2.concat(sameArr).concat(onlyArr);
+    arr.sort(compare('no'));
+    return arr;
+  },
+  findAccountbookOaModule(accountbookId, accountbookList) {
+    return accountbookList.filter(item => item.id === accountbookId)[0].oaModule
+  },
+  // 通过单据判断
+  showOaProcessByBillType(accountbookId, billType) {
+    this.addLoading()
+    request({
+      hideLoading: this.hideLoading,
+      url: app.globalData.url + 'oaBillConfigController.do?getEnableStatus&accountbookId=' + accountbookId + '&billType=' + billType,
+      method: 'GET',
+      success: res => {
+        this.setData({
+          showOaUserNodeList: res
+        })
+      }
+    })
+  },
+  showOaUserNodeListUseField(fields){
+    let result = false
+    result = fields.every(field => {
+      const fieldValue = this.data.submitData[field]
+      if(Array.isArray(fieldValue)) {
+        return fieldValue.length
+      }else{
+        return !!fieldValue
+      }
+    })
+    console.log(result, 'result..........')
+    if(this.data.oaModule && this.data.showOaUserNodeList && result) {
+      this.setData({
+        showOa: true
+      })
+      this.getProcess(fields, 4)
+    }else{
+      this.setData({
+        showOa: false
+      })
+    }
+  },
+  getOaParams(fields, billType) {
+    let params = ''
+    fields.forEach(item => {
+      if(Array.isArray(this.data.submitData[item])) {
+        let amount = 0
+        this.data.submitData[item].forEach(obj => {
+          amount += Number(obj.borrowAmount)
+        })
+        params += '&amount=' + amount
+      }else{
+        params += '&' + item + '=' + this.data.submitData[item]
+      }
+    })
+    params = '&billType=' + billType + params
+    return params
+  },
+  getProcess(fields) {
+    const params = this.getOaParams(fields, 4)
+    this.addLoading()
+    request({
+      hideLoading: this.hideLoading,
+      url: app.globalData.url + 'oaBillConfigController.do?getOAUserList' + params,
+      method: 'GET',
+      success: res => {
+        if(res.data && res.data.length) {
+          const nodeList = res.data.map(node => {
+            node.oaBillUserList = node.oaBillUserList ? node.oaBillUserList : []
+            return {
+              ...node,
+              oaBillUserList: this.handleUserName('showUserName', 'userName', node.oaBillUserList) || [],
+              showOaBillUserList: node.oaBillUserList.length > 3 ? this.handleUserName('showUserName', 'userName',node.oaBillUserList.slice(1, 4)) : this.handleUserName('showUserName', 'userName', node.oaBillUserList.slice(1)),
+              editable:node.editable,
+              allowMulti:node.allowMulti,
+              nodeTypeName:node.nodeType === 'serviceTask' ? '抄送' : '审批',
+              operate:node.signType === 'and' ? '+' : '/',
+              nodeName: node.nodeName
+            }
+          })
+          this.setData({nodeList})
+        }
+      },
+    })
+  },
+  handleUserName(newKey, key, arr) {
+    if(arr && arr.length) {
+      return arr.map(item => ({
+        ...item,
+        [newKey]: item[key].slice(-2)
+      }))
+    }
+    return []
+  },
+  setRenderProgress(nodeList) {
+    const newNodeList = nodeList.map(node => {
+      return {
+        ...node,
+        oaBillUserList: this.handleUserName('showUserName', 'userName', node.oaBillUserList) || [],
+        showOaBillUserList: node.oaBillUserList.length > 3 ? this.handleUserName('showUserName', 'userName',node.oaBillUserList.slice(1, 4)) : this.handleUserName('showUserName', 'userName', node.oaBillUserList.slice(1)),
+        editable:node.editable,
+        allowMulti:node.allowMulti,
+        nodeTypeName:node.nodeType === 'serviceTask' ? '抄送' : '审批',
+        operate:node.signType === 'and' ? '+' : '/',
+        nodeName: node.nodeName
+      }
+    })
+    if(!!nodeList) {
+      this.setData({
+        nodeList: newNodeList,
+        showOa: true
+      })
+    }
+  },
+  getDept(e) {
+    const allowMulti = e.currentTarget.dataset.allowmulti
+    const nodeIndex = e.currentTarget.dataset.index
+    // 存一下是单选还是多选
+    tt.setStorage({
+      key: 'allowMulti',
+      data: allowMulti
+    })
+    // 存一下是点的第几个node
+    tt.setStorage({
+      key: 'nodeIndex',
+      data: nodeIndex
+    })
+    const accountbookId = this.data.submitData.accountbookId
+    this.addLoading()
+    request({
+      hideLoading: this.hideLoading,
+      url: app.globalData.url + 'newDepartDetailController.do?treeListWithUser&accountbookId=' + accountbookId,
+      method: 'GET',
+      success: res => {
+        if(res && res.data) {
+          const users = this.setSearchArr(res.data)
+          const searchUserList = this.handleUsers(users)
+          tt.setStorageSync('searchUserList', searchUserList)
+          tt.setStorage({
+            key: 'deptList',
+            data: res.data,
+            success: () => {
+              tt.navigateTo({
+                url: '/pages/deptList/index'
+              })
+            }
+          })
+        }
+      }
+    })
+  },
+  setSearchArr(deptList) {
+    let users = []
+    for(let i = 0; i < deptList.length; i++) {
+      const dept = deptList[i]
+      users.concat(this.generateUsername(dept, users))
+    }
+    return users
+  },
+  generateUsername(dept, users) {
+    const userList = dept.userList || []
+    const subDepartList = dept.subDepartList || []
+    if(userList.length) {
+      userList.forEach(item => {
+        users.push(item)
+      })
+    }
+    if(subDepartList.length) {
+      subDepartList.forEach(subDepart => {
+        users.concat(this.generateUsername(subDepart, users))
+      })
+    }
+    return users
+  },
+  handleUsers(users) {
+    const newUsers = []
+    if(users.length) {
+      const obj = {}
+      users.reduce((prev, cur) => {
+        obj[cur.id] ? '':obj[cur.id] = true && prev.push(cur)
+        return prev
+      }, newUsers)
+    }
+    return newUsers
+  },
+  removeUser(e) {
+    const id = e.currentTarget.dataset.id
+    const nodeIndex = e.currentTarget.dataset.index
+    this.data.nodeList[nodeIndex].oaBillUserList = this.handleUserName('showUserName', 'userName', this.data.nodeList[nodeIndex].oaBillUserList.filter(item => item.id !== id))
+    this.data.nodeList[nodeIndex].showOaBillUserList = this.data.nodeList[nodeIndex].oaBillUserList.length > 3 ? this.handleUserName('showUserName', 'userName', this.data.nodeList[nodeIndex].oaBillUserList.slice(1, 4)) : this.handleUserName('showUserName','userName', this.data.nodeList[nodeIndex].oaBillUserList.slice(1))
+    this.setData({
+      nodeList: this.data.nodeList,
+      nodeIndex,
+      selectedUserList:this.data.nodeList[nodeIndex]
+    })
+  },
+  getSelectedUserListFromStorage() {
+    const selectedUsers = tt.getStorageSync('selectedUsers') || []
+    const nodeIndex = tt.getStorageSync('nodeIndex')
+    let currentNodeList = []
+    if(selectedUsers.length && nodeIndex !== null) {
+      currentNodeList = selectedUsers[nodeIndex].map(item => ({...item, removable: true}))
+    }
+    if(!!currentNodeList && nodeIndex !== null) {
+      if(this.data.nodeList[nodeIndex]) {
+        // 把用户刚选择的和之前已经选择的混合在一起
+        this.data.nodeList[nodeIndex].oaBillUserList = this.data.nodeList[nodeIndex].oaBillUserList.concat(currentNodeList)
+        // 然后去重
+        this.data.nodeList[nodeIndex].oaBillUserList = this.handleUsers(this.data.nodeList[nodeIndex].oaBillUserList)
+        this.data.nodeList[nodeIndex].oaBillUserList = this.handleUserName('showUserName', 'userName', this.data.nodeList[nodeIndex].oaBillUserList)
+        this.data.nodeList[nodeIndex].showOaBillUserList = this.data.nodeList[nodeIndex].oaBillUserList.length > 3 ? this.handleUserName('showUserName', 'userName', this.data.nodeList[nodeIndex].oaBillUserList.slice(1, 4)) : this.handleUserName('showUserName', 'userName',this.data.nodeList[nodeIndex].oaBillUserList.slice(1))
+        this.setData({
+          nodeList: this.data.nodeList,
+          nodeIndex: nodeIndex,
+          selectedUserList: this.data.nodeList[nodeIndex],
+        })
+      }
+    }
+    this.clearSelectedUserList()
+  },
+  clearSelectedUserList() {
+    tt.removeStorage({key: 'selectedUsers'})
+    tt.removeStorage({key: 'nodeIndex'})
+  },
+  showSelectedUserList(e) {
+    const nodeIndex = e.currentTarget.dataset.index
+    this.setData({
+      selectedUserList: this.data.nodeList[nodeIndex],
+      nodeIndex
+    })
+    var animation = tt.createAnimation({
+      duration: 250,
+      timeFunction: 'ease-in'
+    })
+    this.animation = animation
+    animation.translateY(0).step()
+    this.setData({
+      animationInfo1: animation.export(),
+    })
+  },
+  hideSelectedUserList() {
+    var animation = tt.createAnimation({
+      duration: 250,
+      timeFunction: 'linear'
+    })
+    this.animation = animation
+    animation.translateY('100%').step()
+    this.setData({
+      animationInfo1: animation.export(),
+    })
+  },
+  // ===============================================================================
 
   // 获取申请组织
   getAccountbookList(data) {
@@ -661,6 +1066,12 @@ Page({
         if (res.data.success && res.data.obj.length) {
           var accountbookIndex = 0;
           var accountbookId = !!data ? data.accountbookId : res.data.obj[0].id; // edit的时候设置值
+          // ============ 审批流 =========
+          this.setData({
+            oaModule: this.findAccountbookOaModule(accountbookId, res.data.obj)
+          })
+          this.showOaProcessByBillType(accountbookId, 4)
+          // ============ 审批流 =========
 
           if (accountbookId) {
             res.data.obj.forEach((item, index) => {
@@ -1307,6 +1718,12 @@ Page({
         billCode: data.billCode
       }
     });
+    let t = null
+    t = setTimeout(() => {
+      this.showOaUserNodeListUseField(['accountbookId', 'submitterDepartmentId', 'billDetailListObj'])
+      this.setRenderProgress(JSON.parse(data.oaBillUserNodeListJson))
+      t = null
+    })
   },
 
   goInfoList() {
@@ -1411,7 +1828,7 @@ Page({
     this.addLoading();
     request({
       hideLoading: this.hideLoading,
-      url: app.globalData.url + 'feishuController.do?getProcessinstanceJson&billType=9&billId=' + billId + '&accountbookId=' + accountbookId,
+      url: app.globalData.url + 'feishuController.do?getProcessinstanceJson&billType=4&billId=' + billId + '&accountbookId=' + accountbookId,
       method: 'GET',
       success: res => {
         console.log(res, '审批流');
