@@ -266,7 +266,7 @@
             </block>
             <view class="title"/>
             <view class="block-wrapper submit-info-wrapper">
-                <view wx:if="{{multiCurrency}}">
+                <view tt:if="{{multiCurrency}}">
                     <view class="total">
                         <view style="display:flex;align-items: center">
                             <image src="../../images/jiekuanTotal-icon.png" mode="scaleToFill" class="jiekuan-icon" />
@@ -296,7 +296,7 @@
                         <text class="total-word">{{result.totalAmount}}</text>
                     </view>
                 </view>
-                <view wx:else>
+                <view tt:else>
                     <view class="total">
                         <view style="display:flex;align-items: center">
                             <image src="../../images/jiekuanTotal-icon.png" mode="scaleToFill" class="jiekuan-icon" />
