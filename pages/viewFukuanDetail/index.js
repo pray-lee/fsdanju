@@ -29,7 +29,8 @@ Page({
   addLoading() {
     if (app.globalData.loadingCount < 1) {
       tt.showLoading({
-        content: '加载中...'
+        content: '加载中...',
+        mask: true,
       });
     }
 
