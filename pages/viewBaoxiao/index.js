@@ -1,4 +1,4 @@
-import { formatNumber, request } from "../../util/getErrorMessage";
+import {loginFiled, formatNumber, request } from "../../util/getErrorMessage";
 import '../../util/handleLodash';
 import { cloneDeep as clone } from 'lodash';
 var app = getApp();

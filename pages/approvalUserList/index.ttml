@@ -10,16 +10,16 @@
             <block tt:if="{{searchResult && searchResult.length}}">
                 <!--      单选多选      -->
                 <block tt:if="{{allowMulti}}">
-                    <label class="checkbox info-item user-item" tt:for="{{searchResult}}" tt:key="index" key="label-{{index}}">
+                    <view class="checkbox info-item user-item" tt:for="{{searchResult}}" tt:key="index" key="label-{{index}}">
                         <checkbox bindtap="searchCheckboxChange" data-index="{{index}}" data-value="{{item.id + '_' + item.name}}" checked="{{item.checked}}"/>
                         <text class="dept-name user-name">{{item.name}}</text>
-                    </label>
+                    </view>
                 </block>
                 <block tt:else>
-                    <label class="radio info-item user-item" tt:for="{{userList}}" tt:key="index" key="label-{{index}}">
+                    <view class="radio info-item user-item" tt:for="{{userList}}" tt:key="index" key="label-{{index}}">
                         <radio bindtap="radioChange" data-index="{{index}}" checked="{{item.checked}}"/>
                         <text class="dept-name user-name">{{item.name}}</text>
-                    </label>
+                    </view>
                 </block>
             </block>
         </scroll-view>
@@ -39,16 +39,16 @@
                 <view class="user-wrapper">
                     <block tt:if="{{userList && userList.length}}">
                         <block tt:if="{{allowMulti}}">
-                                <label class="checkbox info-item user-item" tt:for="{{userList}}" tt:key="index" key="label-{{index}}">
+                                <view class="checkbox info-item user-item" tt:for="{{userList}}" tt:key="index" key="label-{{index}}">
                                     <checkbox bindtap="checkboxChange" data-index="{{index}}" data-value="{{item.id + '_' + item.name}}" checked="{{item.checked}}"/>
                                     <text class="dept-name user-name">{{item.name}}</text>
-                                </label>
+                                </view>
                         </block>
                         <block tt:else>
-                            <label class="radio info-item user-item" tt:for="{{userList}}" tt:key="index" key="label-{{index}}">
+                            <view class="radio info-item user-item" tt:for="{{userList}}" tt:key="index" key="label-{{index}}">
                                 <radio bindtap="radioChange" data-index="{{index}}" checked="{{item.checked}}"/>
                                 <text class="dept-name user-name">{{item.name}}</text>
-                            </label>
+                            </view>
                         </block>
                     </block>
                 </view>

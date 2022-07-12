@@ -27,6 +27,8 @@ Page({
             formatUnverifyAmount: 'formatUnverifyAmount',
             verificationAmount: 'verificationAmount',
             formatVerificationAmount: 'formatVerificationAmount',
+            totalAmount: 'totalAmount',
+            formatTotalAmount: 'formatTotalAmount'
         },
         // =============审批流相关============
         oaModule: null,
@@ -97,6 +99,7 @@ Page({
             formatApplicationAmount: 0,
             originApplicationAmount: '',
             originFormatApplicationAmount: '',
+            totalAmount: 0,
             formatTotalAmount: 0,
             formatVerificationAmount: 0,
             status: 20,
@@ -216,6 +219,9 @@ Page({
             if (item.indexOf('billDetailList') !== -1) {
                 delete this.data.submitData[item];
             }
+            if(this.data.submitData[item] === null) {
+                delete this.data.submitData[item]
+            }
         }); // 处理一下提交格式
 
         this.formatSubmitData(this.data.baoxiaoList, 'billDetailList'); // 提交的时候删除借款科目
@@ -226,6 +232,11 @@ Page({
                 delete item.applicationAmount
                 delete item.formatApplicationAmount
             }
+            Object.keys(item).forEach(key => {
+                if(item[key] === null) {
+                    delete item[key]
+                }
+            })
             delete item['subject.fullSubjectName']
             delete item['billApXlsList']
             delete item['billTrueApXlsList']
@@ -622,7 +633,6 @@ Page({
 
                     this.setApplicationAmount(baoxiaoList);
                     this.setTotalAmount();
-                    this.showOaUserNodeListUseField(['accountbookId', 'submitterDepartmentId', 'baoxiaoList', 'totalAmount', 'reimbursementType'])
                 }
             }
         });
@@ -671,7 +681,6 @@ Page({
         }
         this.setApplicationAmount(baoxiaoList);
         this.setTotalAmount();
-        this.showOaUserNodeListUseField(['accountbookId', 'submitterDepartmentId', 'baoxiaoList', 'totalAmount', 'reimbursementType'])
     },
 
     // 删除得时候把submitData里面之前存的报销列表数据清空
@@ -1013,7 +1022,8 @@ Page({
             if (this.data.submitData[item] || this.data.submitData[item] === 0) {
                 params += '&' + item + '=' + this.data.submitData[item]
             } else {
-                params += '&applicationAmount=' + this.data.submitData.applicationAmount
+                const applicationAmount = this.data.submitData.applicationAmount ? this.data.submitData.applicationAmount : 0
+                params += '&applicationAmount=' + applicationAmount
             }
         })
         params = '&billType=' + billType + params
@@ -1636,6 +1646,8 @@ Page({
                 originFormatApplicationAmount: formatNumber(Number(data.originApplicationAmount).toFixed(2)),
                 originVerificationAmount: data.originVerificationAmount,
                 originFormatVerificationAmount: formatNumber(Number(data.originVerificationAmount).toFixed(2)),
+                originTotalAmount: data.originTotalAmount,
+                originFormatTotalAmount:formatNumber(Number(data.originTotalAmount).toFixed(2)),
                 exchangeRate: data.exchangeRate,
                 // 报销类型
                 reimbursementType: data.reimbursementType || '',
@@ -1652,7 +1664,7 @@ Page({
             this.setRenderProgress(JSON.parse(data.oaBillUserNodeListJson))
             clearTimeout(t)
             t = null
-        }, 1000)
+        })
     },
 
     // 辅助核算请求url分类
@@ -1781,7 +1793,9 @@ Page({
                                 obj.formatApplicationAmount = formatNumber(Number(item.applicationAmount).toFixed(2))
                             }
                             // 发票
-                            obj.invoiceInfoId = item.invoiceInfoId
+                            if(item.invoiceInfoId && item.invoiceInfoId !== 'null') {
+                                obj.invoiceInfoId = item.invoiceInfoId
+                            }
                             if (!!item.extraMessage) {
                                 obj.extraMessage = JSON.parse(item.extraMessage);
                                 obj.subjectExtraConf = JSON.parse(item.subjectExtraConf);
@@ -1884,7 +1898,9 @@ Page({
             if (this.data.multiCurrency) {
                 url = app.globalData.url + 'borrowBillController.do?dataGridManager&accountbookId=' + this.data.submitData.accountbookId + '&applicantType=' + this.data.submitData.applicantType + '&applicantId=' + this.data.submitData.applicantId + '&currencyTypeId=' + this.data.submitData.currencyTypeId + '&invoice=' + invoice + '&query=import&field=id,billCode,accountbookId,departDetail.id,departDetail.depart.departName,applicantId,applicantName,subjectId,subject.fullSubjectName,auxpropertyNames,submitter.id,submitter.realName,invoice,contractNumber,currencyTypeId,amount,originAmount,unverifyAmount,originUnverifyAmount,remark,businessDateTime,submitDate'
             }
+            this.addLoading()
             request({
+                hideLoading: this.hideLoading,
                 url,
                 method: 'GET',
                 success: res => {
@@ -2021,6 +2037,8 @@ Page({
         var verificationAmount = this.setBorrowAmount(this.data.importList) || 0; // 应付款金额
 
         var totalAmount = Number(applicationAmount) - Number(verificationAmount);
+        // 记录一下计算之前的总数
+        var oldTotalAmount = this.data.submitData[this.data.amountField.totalAmount]
         if (this.data.multiCurrency) {
             this.setData({
                 submitData: {
@@ -2039,7 +2057,9 @@ Page({
                 }
             })
         }
-        this.showOaUserNodeListUseField(['accountbookId', 'submitterDepartmentId', 'baoxiaoList', 'totalAmount', 'reimbursementType'])
+        if(totalAmount != oldTotalAmount) {
+            this.showOaUserNodeListUseField(['accountbookId', 'submitterDepartmentId', 'baoxiaoList', 'totalAmount', 'reimbursementType'])
+        }
     },
 
     clearBorrowList(submitData) {
@@ -2354,7 +2374,9 @@ Page({
                 verificationAmount: multiCurrency ? 'originVerificationAmount' : 'verificationAmount',
                 formatVerificationAmount: multiCurrency ? 'originFormatVerificationAmount' : 'formatVerificationAmount',
                 unverifyAmount: multiCurrency ? 'originUnverifyAmount' : 'unverifyAmount',
-                formatUnverifyAmount: multiCurrency ? 'originFormatUnverifyAmount' : 'formatUnverifyAmount'
+                formatUnverifyAmount: multiCurrency ? 'originFormatUnverifyAmount' : 'formatUnverifyAmount',
+                totalAmount: multiCurrency ? 'originTotalAmount' : 'totalAmount',
+                formatTotalAmount: multiCurrency ? 'originFormatTotalAmount' : 'formatTotalAmount',
             }
         })
         if (multiCurrency) {
