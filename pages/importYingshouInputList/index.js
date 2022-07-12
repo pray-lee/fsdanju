@@ -75,7 +75,7 @@ Page({
         tt.removeStorageSync('invoiceImportListTag')
         const importList = tt.getStorageSync('importList');
         const savedImportList = tt.getStorageSync('savedImportList') || [];
-        importList.forEach(item => item.applicationAmount = item.unverifyAmount);
+        importList && importList.forEach(item => item.applicationAmount = item.unverifyAmount)
 
         if (importList.length) {
             let oldList = savedImportList.concat();
@@ -155,7 +155,7 @@ Page({
             this.getSelectOcrListFromStorage()
             this.getBillInvoiceDetail()
             this.getOcrListFromListFromStorage()
-        })
+        }, 300)
         // =======================
         this.getRemarksFromStorage();
         if (!tt.getStorageSync('invoiceImportListTag')) {

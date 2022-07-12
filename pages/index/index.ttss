@@ -1,4 +1,3 @@
-@import '../components/errorView/index.ttss';
 .baoxiao-container, .jiekuan-container{
   padding: 40rpx;
   background:#fff;
