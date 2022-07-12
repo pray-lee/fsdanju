@@ -16,6 +16,15 @@
                         <view class="mock-input">{{result.departDetail.depart.departName}}</view>
                     </view>
                 </view>
+                <block tt:if="{{result.submitterName || realName}}">
+                    <view class="form-line"/>
+                    <view class="form-row">
+                        <view class="form-row-label picker"><text class="require">*</text>申请人</view>
+                        <view class="form-row-content">
+                            <view class="mock-input">{{result.submitterName || realName}}</view>
+                        </view>
+                    </view>
+                </block>
             </view>
             <view class="title">收款方信息</view>
             <view class="block-wrapper">
@@ -135,10 +144,10 @@
                             </view>
                             <view class="borrow-line"/>
                             <block>
-                                <view tt:if="{{item.remark && item.remark !== 'null'}}" class="form-row-content">
+                                <view tt:if="{{item.remark && item.remark !== 'null'}}" class="form-row-content remark">
                                     <text>{{item.remark}}</text>
                                 </view>
-                                <view tt:else class="form-row-content">无</view>
+                                <view tt:else class="form-row-content remark">无</view>
                             </block>
                         </view>
                         <view class="form-line"/>

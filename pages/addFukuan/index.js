@@ -344,9 +344,16 @@ Page({
 
   handleSubjectName() {
     const fukuanList = this.data.fukuanList.map(item => {
-      return { ...item,
-        subjectName: item.subjectName.indexOf('_') != -1 ? item.subjectName.split('_')[item.subjectName.split('_').length - 1] : item.subjectName
-      };
+      if(item.subjectName) {
+        return {
+          ...item,
+          subjectName: item.subjectName.indexOf('_') != -1 ? item.subjectName.split('_')[item.subjectName.split('_').length - 1] : item.subjectName
+        }
+      }
+      return {
+        ...item,
+        subjectName: item.trueSubjectName.indexOf('_') != -1 ? item.trueSubjectName.split('_')[item.trueSubjectName.split('_').length - 1] : item.trueSubjectName
+      }
     });
     this.setData({
       fukuanList
@@ -1466,7 +1473,7 @@ Page({
       this.addLoading();
       request({
         hideLoading: this.hideLoading,
-        url: app.globalData.url + 'borrowBillController.do?dataGridManager&accountbookId=' + this.data.submitData.accountbookId + '&applicantType=' + this.data.submitData.applicantType + '&applicantId=' + this.data.submitData.applicantId + '&invoice=' + invoice + '&query=import&field=id,billCode,accountbookId,departDetail.id,departDetail.depart.departName,subjectId,subject.fullSubjectName,auxpropertyNames,submitter.id,submitter.realName,invoice,contractNumber,amount,unverifyAmount,remark,businessDateTime,submitDate,',
+        url: app.globalData.url + 'borrowBillController.do?dataGridManager&accountbookId=' + this.data.submitData.accountbookId + '&applicantType=' + this.data.submitData.applicantType + '&applicantId=' + this.data.submitData.applicantId + '&invoice=' + invoice + '&query=import&field=id,billCode,accountbookId,departDetail.id,departDetail.depart.departName,applicantId,applicantName,subjectId,subject.fullSubjectName,auxpropertyNames,submitter.id,submitter.realName,invoice,contractNumber,currencyTypeId,amount,originAmount,unverifyAmount,originUnverifyAmount,remark,businessDateTime,submitDate',
         method: 'GET',
         success: res => {
           if (res.data.rows.length) {
@@ -1585,6 +1592,7 @@ Page({
         formatTotalAmount: formatNumber(Number(totalAmount).toFixed(2))
       }
     });
+    this.showOaUserNodeListUseField(['accountbookId', 'submitterDepartmentId', 'fukuanList', 'totalAmount'])
   },
 
   clearBorrowList(submitData) {
