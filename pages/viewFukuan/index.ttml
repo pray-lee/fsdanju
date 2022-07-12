@@ -84,6 +84,7 @@
                                 <view class="remark-title">事由：</view>
                                 <view class="remark-content" tt:if="{{item.remark && item.remark !== 'null'}}">{{item.remark}}</view>
                                 <view class="remark-content" tt:else>无</view>
+                                <view class="remark-content has-invoice" tt:if="{{item.invoiceInfoId}}">已有发票</view>
                             </view>
                             <view bindtap="showFukuanDetail" data-index="{{index}}" class="form-row-content ellipsis borrow-remark baoxiaoDetail-right">{{item.formatApplicationAmount}}
                             </view>

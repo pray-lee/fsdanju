@@ -236,9 +236,10 @@ Page({
       });
       // ============ 审批流 =========
       this.setData({
-        oaModule: this.findAccountbookOaModule(this.data[listName][value], this.data.accountbookList)
+        oaModule: this.findAccountbookOaModule(this.data[listName][value].id, this.data.accountbookList)
       })
-      this.showOaProcessByBillType(this.data[listName][value], 3)
+      this.showOaProcessByBillType(this.data[listName][value].id, 3)
+      // ============ 审批流 =========
       // ============ 审批流 =========
       this.setTotalAmount();
       this.getDepartmentList(this.data[listName][value].id);
@@ -343,7 +344,7 @@ Page({
   handleSubjectName() {
     const fukuanList = this.data.fukuanList.map(item => {
       return { ...item,
-        subjectName: item.subjectName.indexOf('_') != -1 ? item.subjectName.split('_')[item.subjectName.split('_').length - 1] : item.subjectName
+        subjectName: item.trueSubjectName.indexOf('_') != -1 ? item.trueSubjectName.split('_')[item.trueSubjectName.split('_').length - 1] : item.trueSubjectName
       };
     });
     this.setData({
@@ -384,12 +385,24 @@ Page({
           fukuanList: oldList.concat(fukuanList)
         });
       }
+      // 发票
+      this.setAccountbookId(this.data.submitData.accountbookId, clone(this.data.fukuanList))
 
       this.setApplicationAmount(this.data.fukuanList);
       this.setTotalAmount();
       this.showOaUserNodeListUseField(['accountbookId', 'submitterDepartmentId', 'fukuanList', 'totalAmount'])
       this.handleSubjectName();
       tt.removeStorageSync('importCommonList');
+    }
+  },
+  setAccountbookId(accountbookId, data) {
+    if(data && data.length) {
+      data.forEach(item => {
+        item.accountbookId = accountbookId
+      })
+      this.setData({
+        fukuanList: data
+      })
     }
   },
 
@@ -464,7 +477,7 @@ Page({
     });
   },
 
-  deleteBaoxiaoDetail(e) {
+  deleteFukuanDetail(e) {
     var idx = e.currentTarget.dataset.index;
     var fukuanList = this.data.fukuanList.filter((item, index) => {
       return idx !== index;
@@ -745,7 +758,10 @@ Page({
     return arr;
   },
   findAccountbookOaModule(accountbookId, accountbookList) {
-    return accountbookList.filter(item => item.id === accountbookId)[0].oaModule
+    const arr = accountbookList.filter(item => item.id === accountbookId)
+    if(arr && arr.length) {
+      return accountbookList.filter(item => item.id === accountbookId)[0].oaModule
+    }
   },
   // 通过单据判断
   showOaProcessByBillType(accountbookId, billType) {
@@ -756,7 +772,7 @@ Page({
       method: 'GET',
       success: res => {
         this.setData({
-          showOaUserNodeList: res
+          showOaUserNodeList: res.data
         })
       }
     })
@@ -1270,13 +1286,18 @@ Page({
       method: 'GET',
       success: res => {
         if (res.data.rows.length) {
+          // 发票
+          tt.setStorageSync(
+              'accountbookId',
+              this.data.submitData.accountbookId
+          )
           tt.setStorage({
             key: 'tempImportList',
             data: res.data.rows,
             success: res => {
               this.hideLoading();
               tt.navigateTo({
-                url: '/pages/importYingshouList/index'
+                url: '/pages/importYingshouList/index?origin=fukuan'
               });
             }
           });
@@ -1296,6 +1317,11 @@ Page({
   // 编辑付款详情
   showFukuanDetail(e) {
     const index = e.currentTarget.dataset.index;
+    // 发票
+    tt.setStorageSync(
+        'accountbookId',
+        this.data.submitData.accountbookId
+    )
     tt.setStorage({
       key: 'index',
       data: index,
@@ -1372,7 +1398,8 @@ Page({
         subjectId: item.subjectId,
         remark: item.remark,
         taxRate: item.taxRate,
-        invoiceType: item.invoiceType
+        invoiceType: item.invoiceType,
+        invoiceInfoId: item.invoiceInfoId
       }));
     } else {
       var fukuanList = [];

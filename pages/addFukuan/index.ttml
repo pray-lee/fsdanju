@@ -103,7 +103,7 @@
                 <view class="baoxiao-list">
                     <view class="baoxiao-item" tt:for="{{fukuanList}}" tt:key="index" tt:if="{{fukuanList.length}}">
                         <view class="form-row">
-                            <view class="delete-baoxiao-item" bindtap="deleteBaoxiaoDetail" data-id="{{item.billDetailId}}" data-index="{{index}}"/>
+                            <view class="delete-baoxiao-item" bindtap="deleteFukuanDetail" data-id="{{item.billDetailId}}" data-index="{{index}}"/>
                             <view bindtap="showFukuanDetail" data-index="{{index}}" class="form-row-content baoxiaoDetail-left">
                                 <view class="subject-title">
                                     {{item.subjectName}}
@@ -111,6 +111,7 @@
                                 <view class="remark-title">事由：</view>
                                 <view class="remark-content" tt:if="{{item.remark && item.remark !== 'null'}}">{{item.remark}}</view>
                                 <view class="remark-content" tt:else>无</view>
+                                <view class="remark-content has-invoice" tt:if="{{item.invoiceInfoId}}">已有发票</view>
                             </view>
                             <view bindtap="showFukuanDetail" data-index="{{index}}" class="form-row-content ellipsis borrow-remark baoxiaoDetail-right">{{item.formatApplicationAmount}}
                             </view>
