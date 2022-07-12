@@ -134,6 +134,16 @@ Page({
   },
 
   formSubmit(e) {
+    // ============= 处理外币提交=================
+    if(!this.data.submitData.isMultiCurrency) {
+      this.setData({
+        submitData: {
+          ...this.data.submitData,
+          isMultiCurrency: 0
+        }
+      })
+    }
+    // ============= 处理外币提交=================
     // ==================处理审批流数据==================
     if(this.data.nodeList.length) {
       this.setData({
@@ -232,6 +242,9 @@ Page({
 
 
     if (name === 'accountbookId') {
+      // 删除借款详情
+      this.clearBillDetailList()
+      this.showOaUserNodeListUseField(['accountbookId', 'submitterDepartmentId', 'billDetailListObj'])
       this.clearSubjectData();
       this.setData({
         applicantIndex: 0,
@@ -305,7 +318,22 @@ Page({
       }
     });
   },
-
+  clearBillDetailList() {
+    this.clearListSubmitData(this.data.submitData, 'billDetailList')
+    this.showOaUserNodeListUseField(['accountbookId', 'submitterDepartmentId', 'billDetailListObj'])
+    this.setData({
+      submitData: {
+        ...this.data.submitData,
+        billDetailListObj: [],
+        amount: '',
+        originAmount: '',
+        formatAmount: '',
+        originFormatAmount: '',
+        totalAmount: '',
+        formatTotalAmount: ''
+      }
+    })
+  },
   clearSubjectData() {
     // 清空科目数据，当这个发生变化的时候
     this.setData({

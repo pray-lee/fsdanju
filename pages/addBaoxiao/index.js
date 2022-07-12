@@ -177,6 +177,16 @@ Page({
   },
 
   formSubmit(e) {
+    // ============= 处理外币提交=================
+    if(!this.data.submitData.isMultiCurrency) {
+      this.setData({
+        submitData: {
+          ...this.data.submitData,
+          isMultiCurrency: 0
+        }
+      })
+    }
+    // ============= 处理外币提交=================
     // ==================处理审批流数据==================
     if(this.data.nodeList.length) {
       this.setData({
@@ -205,8 +215,8 @@ Page({
     const tempData = clone(this.data.importList);
     tempData.forEach(item => {
       if(this.data.multiCurrency) {
-        delete [item.applicationAmount]
-        delete [item.formatApplicationAmount]
+        delete item.applicationAmount
+        delete item.formatApplicationAmount
       }
       delete item['subject.fullSubjectName']
       delete item['billApXlsList']
@@ -294,6 +304,7 @@ Page({
 
 
     if (name === 'accountbookId') {
+      this.showOaUserNodeListUseField(['accountbookId', 'submitterDepartmentId', 'baoxiaoList', 'totalAmount', 'reimbursementType'])
       // 重新获取科目以后，就要置空报销列表
       this.setData({
         baoxiaoList: [],
@@ -488,6 +499,15 @@ Page({
         const importList = res.data;
 
         if (!!importList && importList.length) {
+          // 外币
+          if (this.data.multiCurrency) {
+            importList.forEach(item => {
+              item.originApplicationAmount = item.applicationAmount
+              item.originFormatApplicationAmount = item.formatApplicationAmount
+              item.applicationAmount = ''
+              item.formatApplicationAmount = ''
+            })
+          }
           console.log('获取选择的借款列表成功', importList);
           const newImportList = this.caculateImportList(importList);
           console.log(newImportList, 'newImportList');
@@ -962,8 +982,8 @@ Page({
   getOaParams(fields, billType) {
     let params = ''
     fields.forEach(item => {
-      if(this.data.submitData[item]) {
-        params += '&' + item + '=' + this.data.submitData[item]
+      if(this.data.submitData[item] || this.data.submitData[item] === 0) {
+          params += '&' + item + '=' + this.data.submitData[item]
       }else{
         params += '&applicationAmount=' + this.data.submitData.applicationAmount
       }
@@ -1560,7 +1580,7 @@ Page({
     // 设置数据
     this.setData({ ...this.data,
       // baoxiaoList,
-      importList,
+      importList: clone(importList),
       status: data.status,
       submitData: { ...this.data.submitData,
         billFilesObj: billFilesObj || [],
@@ -2368,6 +2388,7 @@ Page({
         borrowBillList = data.borrowBillList.map(item => {
           return {
             ...item,
+            'subject.fullSubjectName':item.subject.fullSubjectName,
             originApplicationAmount: item.originApplicationAmount ? item.originApplicationAmount : item.applicationAmount,
             originFormatApplicationAmount: item.originApplicationAmount ? formatNumber(Number(item.originApplicationAmount).toFixed(2)) : formatNumber(Number(item.applicationAmount).toFixed(2))
           }

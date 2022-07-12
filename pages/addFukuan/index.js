@@ -224,6 +224,7 @@ Page({
 
 
     if (name === 'accountbookId') {
+      this.showOaUserNodeListUseField(['accountbookId', 'submitterDepartmentId', 'fukuanList', 'totalAmount'])
       // 重新获取科目以后，就要置空报销列表
       this.setData({
         fukuanList: [],
@@ -344,7 +345,7 @@ Page({
   handleSubjectName() {
     const fukuanList = this.data.fukuanList.map(item => {
       return { ...item,
-        subjectName: item.trueSubjectName.indexOf('_') != -1 ? item.trueSubjectName.split('_')[item.trueSubjectName.split('_').length - 1] : item.trueSubjectName
+        subjectName: item.subjectName.indexOf('_') != -1 ? item.subjectName.split('_')[item.subjectName.split('_').length - 1] : item.subjectName
       };
     });
     this.setData({
