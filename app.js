@@ -18,7 +18,7 @@ App({
   },
 
   globalData: {
-    url: 'https://www.caika.net/caika/',
+    url: 'https://www.caika.net/ucommune-test/',
     appId: 'cli_a28eda58bd78d00c',
     tenantCode: 'db_ck_saas_v1_test',
     // 雅学院

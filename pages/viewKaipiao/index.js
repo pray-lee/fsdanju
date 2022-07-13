@@ -20,7 +20,10 @@ Page({
     }
 
     app.globalData.loadingCount++;
-  },
+
+
+
+    },
 
   hideLoading() {
     app.globalData.loadingCount--;
@@ -88,8 +91,7 @@ Page({
     });
   },
 
-  rollBack() {
-    this.addLoading();
+  rollBack() { this.addLoading();
     request({
       hideLoading: this.hideLoading(),
       url: app.globalData.url + 'invoicebillController.do?doBatchTemporaryStorage&ids=' + this.data.result.id,

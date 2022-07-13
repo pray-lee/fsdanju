@@ -121,7 +121,7 @@ Page({
         //更新数据
         that.setData({
             list: that.data.list,
-            filterList: this.data.list
+            filterList: that.data.filterList
         })
     },
     /**

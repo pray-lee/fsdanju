@@ -66,22 +66,20 @@ Page({
     })
   },
   getDetail(query) {
-    if(app.globalData.isWxWork) {
-      const sessionId = tt.getStorageSync('sessionId')
-      if(!sessionId) {
         this.addLoading()
-        tt.qy.login({
+        tt.login({
           success: res => {
             this.hideLoading()
             this.addLoading()
             request({
               hideLoading: this.hideLoading,
-              url: app.globalData.url + "loginController.do?loginDingTalk&tenantCode=" + app.globalData.tenantCode + "&code=" + res.code + '&corpId=' + app.globalData.corpId,
+              url: app.globalData.url + "loginController.do?loginFeishu&tenantCode=" + app.globalData.tenantCode + "&code=" + res.code + '&appId=' + app.globalData.appId + '&db=' + app.globalData.tenantCode,
               method: 'GET',
               success: res => {
                 if (res.data.success) {
                   if(res.data.obj) {
                     app.globalData.realName = res.data.obj.realName
+                    app.globalData.applicantId = res.data.obj.id;
                     this.getDetailById(query)
                   }else{
                     loginFiled(res.data.msg)
@@ -110,10 +108,6 @@ Page({
             })
           }
         })
-      }else{
-        this.getDetailById(query)
-      }
-    }
   },
   onLoad(query) {
     // 增加申请人
