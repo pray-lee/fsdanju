@@ -158,6 +158,7 @@ Page({
         }, 300)
         // =======================
         this.getRemarksFromStorage();
+        this.getInvoiceAccountbookIdFromStorage()
         if (!tt.getStorageSync('invoiceImportListTag')) {
             this.getImportListFromStorage()
         }
@@ -284,14 +285,32 @@ Page({
     },
     // 发票
     onAddShow(e) {
-        this.animation.translateY(0).step()
-        this.setData({
-            animationInfo: this.animation.export(),
-            maskHidden: false
-        })
-        const index = e.currentTarget.dataset.index
-        this.setData({
-            invoiceIndex: index
+        this.addLoading()
+        request({
+            hideLoading: this.hideLoading,
+            url: app.globalData.url + 'invoiceConfigController.do?getInvoiceConfigByAccountbook&accountbookId=' + this.data.accountbookId,
+            method: 'GET',
+            success: res => {
+                if(res.statusCode == 200) {
+                    if(res.data) {
+                        this.animation.translateY(0).step()
+                        this.setData({
+                            animationInfo: this.animation.export(),
+                            maskHidden: false
+                        })
+                        const index = e.currentTarget.dataset.index
+                        this.setData({
+                            invoiceIndex: index
+                        })
+                    }else{
+                        tt.showModal({
+                            content: '当前组织未开通票据管理',
+                            confirmText: '好的',
+                            showCancel: false
+                        })
+                    }
+                }
+            }
         })
     },
     onAddHide() {
@@ -304,16 +323,55 @@ Page({
     // 发票相关
     handleUpload() {
         tt.setStorageSync('invoiceImportListTag', 1)
-        tt.chooseImage({
-            count: 9,
+        this.goToInvoiceAccountbookList()
+    },
+    goToInvoiceAccountbookList() {
+        this.addLoading()
+        request({
+            hideLoading: this.hideLoading,
+            url: app.globalData.url + 'invoiceConfigController.do?getAccountbookListByUserId&userId=' + app.globalData.applicantId,
+            method: 'GET',
             success: res => {
-                this.uploadFile(res.tempFilePaths)
-            },
-            fail: res => {
-                console.log('用户取消操作')
-                // dd.removeStorageSync({key: 'invoiceImportListTag'})
+                if (res.statusCode === 200) {
+                    if(res.data && res.data.length) {
+                        tt.setStorage({
+                            key: 'invoiceAccountbookList',
+                            data: res.data.filter(item => item.id === this.data.accountbookId),
+                            success: res => {
+                                tt.navigateTo({
+                                    url: "/pages/invoiceAccountbookList/index"
+                                })
+                            }
+                        })
+                    }else{
+                        tt.showModal({
+                            content: '当前用户没有开通发票模块',
+                            confirmText: '好的',
+                            showCancel: false,
+                        })
+                    }
+                }
             }
         })
+    },
+    getInvoiceAccountbookIdFromStorage() {
+        const accountbookId = tt.getStorageSync('invoiceAccountbookId')
+        if(accountbookId) {
+            tt.chooseImage({
+                count: 9,
+                success: res => {
+                    this.uploadFile(res.tempFilePaths, accountbookId)
+                },
+                fail: res => {
+                    console.log('用户取消操作')
+                    // dd.removeStorageSync({key: 'invoiceImportListTag'})
+                }
+            })
+            tt.removeStorage({
+                key: 'invoiceAccountbookId',
+                success: () => {}
+            })
+        }
     },
     invoiceInput() {
         tt.setStorageSync('invoiceImportListTag', 1)
@@ -339,7 +397,7 @@ Page({
      *
      * @param 上传图片字符串列表
      */
-    uploadFile(array) {
+    uploadFile(array, accountbookId) {
         if (array.length) {
             let promiseList = []
             array.forEach(item => {
@@ -350,7 +408,7 @@ Page({
                         name: item,
                         filePath: item,
                         formData: {
-                            accountbookId: 'accountbook-invoice',
+                            accountbookId,
                             submitterDepartmentId: 'department-invoice'
                         },
                         success: res => {
@@ -381,7 +439,7 @@ Page({
                         size: item.size
                     })
                 })
-                this.doOCR(billFilesList)
+                this.doOCR(billFilesList, accountbookId)
             }).catch(error => {
                 tt.showModal({
                     content: '上传失败',
@@ -394,13 +452,14 @@ Page({
             })
         }
     },
-    doOCR(fileList) {
+    doOCR(fileList, accountbookId) {
         this.addLoading()
         request({
             hideLoading: this.hideLoading,
             url: app.globalData.url + 'invoiceInfoController.do?doOCR',
             data: {
                 fileList: JSON.stringify(fileList),
+                accountbookId,
             },
             method: 'POST',
             success: res => {
@@ -418,7 +477,7 @@ Page({
                                         this.data.accountbookId
                                     )
                                     tt.navigateTo({
-                                        url: '/pages/invoiceSelect/index'
+                                        url: '/pages/invoiceSelect/index?invoiceAccountbookId=' + accountbookId
                                     })
                                 }
                             })

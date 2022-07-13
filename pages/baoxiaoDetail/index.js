@@ -124,10 +124,28 @@ Page({
     }
   },
   onAddShow() {
-    this.animation.translateY(0).step()
-    this.setData({
-      animationInfo: this.animation.export(),
-      maskHidden: false
+    this.addLoading()
+    request({
+      hideLoading: this.hideLoading,
+      url: app.globalData.url + 'invoiceConfigController.do?getInvoiceConfigByAccountbook&accountbookId=' + this.data.baoxiaoDetail.accountbookId,
+      method: 'GET',
+      success: res => {
+        if(res.statusCode == 200) {
+          if(res.data) {
+            this.animation.translateY(0).step()
+            this.setData({
+              animationInfo: this.animation.export(),
+              maskHidden: false
+            })
+          }else{
+            tt.showModal({
+              content: '当前组织未开通票据管理',
+              confirmText: '好的',
+              showCancel: false
+            })
+          }
+        }
+      }
     })
   },
   onAddHide() {
@@ -150,6 +168,7 @@ Page({
     this.getSelectOcrListFromStorage()
     this.getBillInvoiceDetail()
     this.getOcrListFromListFromStorage()
+    this.getInvoiceAccountbookIdFromStorage()
     // =======================
     // ========页面显示=======
     setTimeout(() => {
@@ -618,15 +637,54 @@ Page({
   },
   // 发票相关
   handleUpload() {
-    tt.chooseImage({
-      count: 9,
+    this.goToInvoiceAccountbookList()
+  },
+  goToInvoiceAccountbookList() {
+    this.addLoading()
+    request({
+      hideLoading: this.hideLoading,
+      url: app.globalData.url + 'invoiceConfigController.do?getAccountbookListByUserId&userId=' + app.globalData.applicantId,
+      method: 'GET',
       success: res => {
-        this.uploadFile(res.tempFilePaths)
-      },
-      fail: res => {
-        console.log('用户取消操作')
+        if (res.statusCode === 200) {
+          if(res.data && res.data.length) {
+            tt.setStorage({
+              key: 'invoiceAccountbookList',
+              data: res.data.filter(item => item.id === this.data.baoxiaoDetail.accountbookId),
+              success: res => {
+                tt.navigateTo({
+                  url: "/pages/invoiceAccountbookList/index"
+                })
+              }
+            })
+          }else{
+            tt.showModal({
+              content: '当前用户没有开通发票模块',
+              confirmText: '好的',
+              showCancel: false,
+            })
+          }
+        }
       }
     })
+  },
+  getInvoiceAccountbookIdFromStorage() {
+    const accountbookId = tt.getStorageSync('invoiceAccountbookId')
+    if(accountbookId) {
+      tt.chooseImage({
+        count: 9,
+        success: res => {
+          this.uploadFile(res.tempFilePaths, accountbookId)
+        },
+        fail: res => {
+          console.log('用户取消操作')
+        }
+      })
+      tt.removeStorage({
+        key: 'invoiceAccountbookId',
+        success: () => {}
+      })
+    }
   },
   invoiceInput() {
     tt.setStorageSync(
@@ -650,7 +708,7 @@ Page({
    *
    * @param 上传图片字符串列表
    */
-  uploadFile(array) {
+  uploadFile(array, accountbookId) {
     if (array.length) {
       let promiseList = []
       array.forEach(item => {
@@ -661,7 +719,7 @@ Page({
             name: item,
             filePath: item,
             formData: {
-              accountbookId: 'accountbook-invoice',
+              accountbookId,
               submitterDepartmentId: 'department-invoice'
             },
             success: res => {
@@ -692,7 +750,7 @@ Page({
             size: item.size
           })
         })
-        this.doOCR(billFilesList)
+        this.doOCR(billFilesList, accountbookId)
       }).catch(error => {
         tt.showModal({
           content: '上传失败',
@@ -705,7 +763,7 @@ Page({
       })
     }
   },
-  doOCR(fileList) {
+  doOCR(fileList, accountbookId) {
     this.addLoading()
     request({
       hideLoading: this.hideLoading,
@@ -729,7 +787,7 @@ Page({
                       this.data.baoxiaoDetail.accountbookId
                   )
                   tt.navigateTo({
-                    url: '/pages/invoiceSelect/index'
+                    url: '/pages/invoiceSelect/index?invoiceAccountbookId=' + accountbookId
                   })
                 }
               })
@@ -1052,6 +1110,61 @@ Page({
         })
       }
     })
-  }
+  },
+  // 预算
+  getBudgetDetail() {
+    if(!this.data.baoxiaoDetail.subjectId) {
+      tt.showModal({
+        content: '请选择科目',
+        confirmText: '好的',
+        showCancel: false
+      })
+      return
+    }
+    if(this.data.baoxiaoDetail.billDetailApEntityListObj.length !== this.data.baoxiaoDetail.subjectAuxptyList.length) {
+      tt.showModal({
+        content: '请补全辅助核算',
+        confirmText: '好的',
+        showCancel: false
+      })
+      return
+    }
+    // 预算请求
+    const params = {
+      billTypeId: 9,
+      businessDateTime: this.data.baoxiaoDetail.businessDateTime,
+      accountbookId: this.data.baoxiaoDetail.accountbookId,
+      submitterDepartmentId: this.data.baoxiaoDetail.submitterDepartmentId,
+      subjectId: this.data.baoxiaoDetail.subjectId,
+      subjectName: this.data.baoxiaoDetail.subjectName
+    }
+    this.formatBudgetData(this.data.baoxiaoDetail.billDetailApEntityListObj, 'billApEntityList', params)
+    this.addLoading()
+    request({
+      hideLoading: this.hideLoading,
+      url: app.globalData.url + 'budgetController.do?getBudgetAmount',
+      method: 'POST',
+      data: params,
+      success: res => {
+        if(res.data.success) {
+          tt.showModal({
+            content: res.data.obj,
+            confirmText: '好的',
+            showCancel: false,
+          })
+        }
+      }
+    })
+  },
+  formatBudgetData(array, name, params) {
+    if (!!array && array.length) {
+      array.forEach((item, index) => {
+        Object.keys(item).forEach(keys => {
+          if(keys != 'name')
+            params[`${name}[${index}].${keys}`] = item[keys]
+        })
+      })
+    }
+  },
 
 });

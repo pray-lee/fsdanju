@@ -956,7 +956,7 @@ Page({
       method: 'GET',
       success: res => {
         this.setData({
-          showOaUserNodeList: res
+          showOaUserNodeList: res.data
         })
       }
     })
@@ -2209,24 +2209,56 @@ Page({
   // 预算
   getBudgetDetail() {
     if(!this.data.submitData.subjectId) {
-      tt.showToast({
-        title: '请选择科目',
-        icon: 'none'
+      tt.showModal({
+        content: '请选择科目',
+        confirmText: '好的',
+        showCancel: false
       })
       return
     }
     if(this.data.submitData.billApEntityListObj.length !== this.data.subjectAuxptyList.length) {
-      tt.showToast({
-        title: '请补全辅助核算',
-        icon: 'none'
+      tt.showModal({
+        content: '请补全辅助核算',
+        confirmText: '好的',
+        showCancel: false
       })
       return
     }
     // 预算请求
-    const params = {}
-    // request({
-    //     hideLoading: this.hideLoading(),
-    // })
-  }
-
+    const params = {
+      billTypeId: 4,
+      businessDateTime: this.data.submitData.businessDateTime,
+      accountbookId: this.data.submitData.accountbookId,
+      submitterDepartmentId: this.data.submitData.submitterDepartmentId,
+      subjectId: this.data.submitData.subjectId,
+      subjectName: this.data.submitData.subjectName
+    }
+    this.formatBudgetData(this.data.submitData.billApEntityListObj, 'billApEntityList', params)
+    this.addLoading()
+    request({
+      hideLoading: this.hideLoading,
+      url: app.globalData.url + 'budgetController.do?getBudgetAmount',
+      method: 'POST',
+      data: params,
+      success: res => {
+        if(res.data.success) {
+          tt.showModal({
+            content: res.data.obj,
+            confirmText: '好的',
+            showCancel: false
+          })
+        }
+      }
+    })
+  },
+  formatBudgetData(array, name, params) {
+    if (!!array && array.length) {
+      array.forEach((item, index) => {
+        Object.keys(item).forEach(keys => {
+          if(keys != 'name')
+            params[`${name}[${index}].${keys}`] = item[keys]
+        })
+      })
+    }
+  },
 });

@@ -29,6 +29,7 @@ Page({
         })
     },
     gotoInvoiceList() {
+        tt.removeStorageSync('accountbookId')
         tt.navigateTo({
             url: '/pages/invoiceList/index'
         })
