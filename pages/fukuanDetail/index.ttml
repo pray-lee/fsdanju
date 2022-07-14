@@ -91,7 +91,7 @@
                         </view>
                     </view>
                 </view>
-                <view class="add-invoice-btn" onTap="onAddShow">请添加发票</view>
+                <view class="add-invoice-btn" bindtap="onAddShow">请添加发票</view>
             </view>
         </view>
     </scroll-view>
@@ -101,10 +101,10 @@
     <!-- 新增单据弹框 -->
     <view class="add-page" animation="{{animationInfo}}">
         <view class="invoice-input-type">
-            <view class="invoice-input-btn invoice-file" onTap="handleUpload">智能拍票</view>
-            <view class="invoice-input-btn invoice-input" onTap="invoiceInput">手录发票</view>
-            <view class="invoice-input-btn invoice-select" onTap="invoiceSelect">个人票夹</view>
+            <view class="invoice-input-btn invoice-file" bindtap="handleUpload">智能拍票</view>
+            <view class="invoice-input-btn invoice-input" bindtap="invoiceInput">手录发票</view>
+            <view class="invoice-input-btn invoice-select" bindtap="invoiceSelect">个人票夹</view>
         </view>
     </view>
-    <view class="mask" hidden="{{maskHidden}}" onTap="onAddHide"></view>
+    <view class="mask" hidden="{{maskHidden}}" bindtap="onAddHide"></view>
 </view>

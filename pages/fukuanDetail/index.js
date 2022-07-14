@@ -37,8 +37,8 @@ Page({
   },
 
   onShow() {
-    let fukuanDetail = tt.getStorageSync('fukuanDetail');
-    if (!!fukuanDetail) {
+    let fukuanDetail = tt.getStorageSync('fukuanDetail') || this.data.fukuanDetail;
+    if (!!fukuanDetail || Object.keys(this.data.fukuanDetail).length) {
       if(fukuanDetail.unverifyAmount) {
         fukuanDetail.formatUnverifyAmount = formatNumber(Number(fukuanDetail.unverifyAmount).toFixed(2))
       }
@@ -85,8 +85,7 @@ Page({
   addLoading() {
     if (app.globalData.loadingCount < 1) {
       tt.showLoading({
-        content: '加载中...',
-        mask: true,
+        title: '加载中...',
       });
     }
 
