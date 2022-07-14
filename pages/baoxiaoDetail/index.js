@@ -770,6 +770,7 @@ Page({
       url: app.globalData.url + 'invoiceInfoController.do?doOCR',
       data: {
         fileList: JSON.stringify(fileList),
+        accountbookId
       },
       method: 'POST',
       success: res => {
