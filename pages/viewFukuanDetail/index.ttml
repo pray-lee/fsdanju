@@ -36,6 +36,7 @@
             <view class="form-row">
                 <!--                <input class="input" type="digit" placeholder="开票金额" value="{{fukuanDetail.formatApplicationAmount}}" bindinput="onKaipiaoBlur"-->
                 <!--                       data-name="applicationAmount"/>-->
+                <view class="form-row-label"><text class="require">*</text>金额</view>
                 <view class="mock-input">{{fukuanDetail['formatApplicationAmount']}}</view>
             </view>
             <view class="form-line"/>

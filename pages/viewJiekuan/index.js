@@ -512,6 +512,9 @@ Page({
                         result.billDetailList.forEach(item => {
                             item.originBorrowAmount = formatNumber(Number(item.originBorrowAmount).toFixed(2))
                         })
+                        this.setData({
+                            result
+                        })
                     }
                 }
             },

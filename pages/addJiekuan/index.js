@@ -1853,7 +1853,7 @@ Page({
         subjectName: data.subject ? data.subject.fullSubjectName : '',
         businessDateTime: data.businessDateTime.split(' ')[0],
         amount: data.amount.toFixed(2),
-        formatAmount: formatNumber(data.amount),
+        formatAmount: formatNumber(Number(data.amount).toFixed(2)),
         // 外币
         originAmount: data.originAmount,
         originFormatAmount: formatNumber(Number(data.originAmount).toFixed(2)),
