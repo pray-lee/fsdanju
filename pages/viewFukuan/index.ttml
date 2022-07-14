@@ -311,7 +311,7 @@
     <view class="add-comment-page" animation="{{animationInfo}}" hidden="{{dialogHidden}}">
         <view class="title">批复意见</view>
         <view class="comment-wrapper">
-            <textarea maxlength="140" bindinput="commentInput" class="comment-input" placeholder="请输入内容"></textarea>
+            <textarea tt:if="{{showTextArea}}" maxlength="140" bindinput="commentInput" class="comment-input" placeholder="请输入内容"></textarea>
         </view>
         <view class="oa-submit-btn-wrapper {{isPhoneXSeries ? 'iphoneX' : ''}}">
             <view class="oa-submit {{approvalType === 'reject' ? 'reject' : 'approval'}}" bindtap="submitOa">{{ approvalType === 'reject' ? '驳回' : '同意'}}</view>

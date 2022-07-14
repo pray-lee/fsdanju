@@ -6,6 +6,7 @@ var app = getApp();
 app.globalData.loadingCount = 0;
 Page({
   data: {
+    showTextArea: false,
     // 增加申请人
     realName: '',
     isPhoneXSeries: false,
@@ -322,6 +323,7 @@ Page({
   onCommentShow(e) {
     const type = e.currentTarget.dataset.type
     this.setData({
+      showTextArea: true,
       approvalType: type,
       submitOaData: {
         ...this.data.submitOaData,
@@ -342,6 +344,7 @@ Page({
   },
   onCommentHide() {
     this.setData({
+      showTextArea: false,
       id: '',
       approveResult: '',
       comment: '',
