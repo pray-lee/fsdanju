@@ -60,10 +60,7 @@ Page({
       this.setData({
         baoxiaoDetail: baoxiaoDetail
       });
-      console.log(baoxiaoDetail, '..................');
     }
-
-    console.log('onLoad');
   },
 
   getBorrowIdFromStorage() {
