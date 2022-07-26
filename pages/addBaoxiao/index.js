@@ -187,6 +187,17 @@ Page({
     },
 
     formSubmit(e) {
+        // 判断有币种的情况下，如果汇率为零，则不能提交
+        if (this.data.multiCurrency) {
+            if (!this.data.submitData.exchangeRate) {
+                tt.showModal({
+                    content: '请确认填写汇率必须大于0！',
+                    confirmText: '好的',
+                    showCancel: false,
+                })
+                return
+            }
+        }
         // ============= 处理外币提交=================
         if (!this.data.submitData.isMultiCurrency) {
             this.setData({
