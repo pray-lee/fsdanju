@@ -18,9 +18,9 @@ App({
   },
 
   globalData: {
-    url: 'https://www.caika.net/caika/',
-    appId: 'cli_a28eda58bd78d00c',
-    tenantCode: 'db_ck_saas_v1_test',
+    // url: 'https://www.caika.net/caika/',
+    // appId: 'cli_a28eda58bd78d00c',
+    // tenantCode: 'db_ck_saas_v1_test',
     // 雅学院
     // url: 'https://www.caika.net/caika/',
     // appId: 'cli_a2b866ef0639900d',
@@ -29,6 +29,10 @@ App({
     // url: 'https://www.caika.net/saas/',
     // appId: 'cli_a209d304ca799013',
     // tenantCode: 'db_ck_goski',
+    // 智取科技
+    url: 'https://www.caika.net/caika/',
+    appId: 'cli_a385a5567abbd00b',
+    tenantCode: 'db_ck_education',
 
   }
 });
