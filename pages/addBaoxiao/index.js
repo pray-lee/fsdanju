@@ -566,7 +566,7 @@ Page({
     },
 
     caculateImportList(importList, inputValue, index) {
-        let totalApplicationAmount = Number(this.data.submitData[this.data.amountField.applicationAmount])
+        let totalApplicationAmount = Number(this.data.submitData[this.data.amountField.applicationAmount].toFixed(2))
         const newImportList = importList.map(item => {
             let applicationAmount = totalApplicationAmount - Number(item[this.data.amountField.applicationAmount])
 
