@@ -26,13 +26,13 @@ App({
     // appId: 'cli_a2b866ef0639900d',
     // tenantCode: 'db_ck_wenhua2021',
     // goski
-    // url: 'https://www.caika.net/saas/',
-    // appId: 'cli_a209d304ca799013',
-    // tenantCode: 'db_ck_goski',
+    url: 'https://www.caika.net/saas/',
+    appId: 'cli_a209d304ca799013',
+    tenantCode: 'db_ck_goski',
     // 智取科技
-    url: 'https://www.caika.net/caika/',
-    appId: 'cli_a385a5567abbd00b',
-    tenantCode: 'db_ck_education',
+    // url: 'https://www.caika.net/caika/',
+    // appId: 'cli_a385a5567abbd00b',
+    // tenantCode: 'db_ck_education',
 
   }
 });
