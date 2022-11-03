@@ -189,6 +189,21 @@ Page({
         this.formatSubmitData(this.data.submitData.billDetailListObj, 'billDetailList');
         this.formatSubmitData(this.data.submitData.billApEntityListObj, 'billApEntityList');
         this.formatSubmitData(this.data.submitData.billFilesObj, 'billFiles');
+        Object.keys(this.data.submitData).forEach(item => {
+            if (item.indexOf('billApEntityListObj') !== -1) {
+                delete this.data.submitData[item];
+            }
+            if (item.indexOf('billDetailListObj') !== -1) {
+                delete this.data.submitData[item];
+            }
+            if (item.indexOf('billFilesObj') !== -1) {
+                delete this.data.submitData[item];
+            }
+            if(this.data.submitData[item] == null) {
+                delete this.data.submitData[item]
+            }
+        });
+        // 处理一下提交格式
         console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~');
         console.log(this.data);
         console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~');
