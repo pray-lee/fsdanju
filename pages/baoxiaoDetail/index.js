@@ -608,6 +608,13 @@ Page({
       return false;
     }
 
+    if(obj.subjectAuxptyList && obj.subjectAuxptyList.length) {
+      if(!obj.selectedAuxpty || (obj.subjectAuxptyList.length !== Object.keys(obj.selectedAuxpty).length)) {
+        validFn('请补全辅助核算信息')
+        return false
+      }
+    }
+
     if (Number(obj.applicationAmount) <= 0) {
       validFn('申请报销金额为空');
       return false;
