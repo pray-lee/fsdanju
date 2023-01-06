@@ -51,14 +51,14 @@ Page({
     getOaList() {
         console.log(app.globalData.loadingCount, 'count-loading.....')
         const url = this.data.undo ?
-            app.globalData.url + 'oaTaskController.do?todoDatagrid&field=id,applicationAmount,accountbookId,billType,billCode,taskName,billId,createDate,processInstanceId,remark,status'
+            app.globalData.url + 'oaTaskController.do?todoDatagrid&field=id,accountbookId,accountbookName,billType,billCode,billId,submitterDepartmentId,submitterDepartmentName,submitterName,createDate,billAmount,taskEndTime,taskEndTime_begin,taskEndTime_end,activeUserNames,taskName,'
             :
-            app.globalData.url + 'oaTaskController.do?finishDatagrid&field=id,applicationAmount,accountbookId,billType,billCode,taskName,billId,createDate,processInstanceId,remark,status'
+            app.globalData.url + 'oaTaskController.do?finishDatagrid&field=id,accountbookId,accountbookName,billType,billCode,billId,submitterDepartmentId,submitterDepartmentName,submitterName,createDate,billAmount,taskEndTime,taskEndTime_begin,taskEndTime_end,activeUserNames,taskName,'
         this.addLoading()
         request({
             hideLoading: this.hideLoading,
             url,
-            method: 'POST',
+            method: 'GET',
             success: res => {
                 if(res.statusCode === 200) {
                     const billTypes = ['4', '9', '3']
@@ -68,7 +68,8 @@ Page({
                                 ...item,
                                 billType: this.data.billType[item.billType],
                                 billName: this.data.billName[item.billType],
-                                billClass: this.data.billType[item.billType].toLowerCase()
+                                billClass: this.data.billType[item.billType].toLowerCase(),
+                                billAmount: formatNumber(Number(item.billAmount).toFixed(2))
                             }
                         })
                     })

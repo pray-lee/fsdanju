@@ -1,7 +1,7 @@
 <view class="form-wrapper">
     <form bindsubmit="formSubmit" onReset="formReset">
         <scroll-view scroll-y
-                     class="form-scroll-wrapper {{judgeShowOperate ? 'show-oa-operate' : ''}} {{isPhoneXSeries ? 'iphoneX' : ''}}">
+            class="form-scroll-wrapper {{judgeShowOperate ? 'show-oa-operate' : ''}} {{isPhoneXSeries ? 'iphoneX' : ''}}">
             <view class="title">申请方信息</view>
             <view class="block-wrapper">
                 <view class="form-row">
@@ -13,7 +13,7 @@
                         <view class="mock-input">{{result.accountbook.accountbookName}}</view>
                     </view>
                 </view>
-                <view class="form-line"/>
+                <view class="form-line" />
                 <view class="form-row">
                     <view class="form-row-label picker">
                         <text class="require">*</text>
@@ -24,7 +24,7 @@
                     </view>
                 </view>
                 <block tt:if="{{result.submitterName || realName}}">
-                    <view class="form-line"/>
+                    <view class="form-line" />
                     <view class="form-row">
                         <view class="form-row-label picker">
                             <text class="require">*</text>
@@ -49,7 +49,7 @@
                         <view tt:if="{{result.applicantType == 30}}" class="mock-input">客户</view>
                     </view>
                 </view>
-                <view class="form-line"/>
+                <view class="form-line" />
                 <view class="form-row" bindtap="goInfoList">
                     <view class="form-row-label">
                         <text class="require">*</text>
@@ -58,15 +58,18 @@
                     <view class="form-row-content borrowList-wrapper">
                         <view class="mock-input">{{result.applicantName}}</view>
                     </view>
+                </view>
+                <view class="form-line"></view>
+                <view class="form-row">
                     <block>
                         <view class="form-row-content incomeBankAccount">
-                            <view tt:if="{{result.incomeBankAccount}}"
-                                  class="mock-input ellipsis">{{result.incomeBankAccount}}</view>
+                            <view tt:if="{{result.incomeBankAccount}}" class="mock-input ellipsis">
+                                {{result.incomeBankAccount}}</view>
                             <view tt:else class="mock-input nodata">暂无银行账号</view>
                         </view>
                         <view class="form-row-content incomeBankName">
-                            <view tt:if="{{result.incomeBankName}}"
-                                  class="mock-input ellipsis">{{result.incomeBankName}}</view>
+                            <view tt:if="{{result.incomeBankName}}" class="mock-input ellipsis">
+                                {{result.incomeBankName}}</view>
                             <view tt:else class="mock-input nodata">银行信息暂无</view>
                         </view>
                     </block>
@@ -81,24 +84,24 @@
                         事由
                     </view>
                     <view class="form-row-content" style="height:auto;min-height:44rpx">
-                        <view class="mock-input" tt:if="{{result.remark}}"
-                              style="height:auto;min-height:44rpx">{{result.remark}}</view>
+                        <view class="mock-input" tt:if="{{result.remark}}" style="height:auto;min-height:44rpx">
+                            {{result.remark}}</view>
                         <view class="mock-input" tt:else>无</view>
                     </view>
                 </view>
-                <view class="form-line"/>
+                <view class="form-line" />
                 <view class="form-row" bindtap="goSubjectPage">
                     <view class="form-row-label">
                         <text class="require">*</text>
                         借款类型
                     </view>
                     <view class="form-row-content">
-                        <view tt:if="{{result.subject.fullSubjectName}}"
-                              class="mock-input">{{result.subject.fullSubjectName}}</view>
+                        <view tt:if="{{result.subject.fullSubjectName}}" class="mock-input">
+                            {{result.subject.fullSubjectName}}</view>
                         <view tt:else class="mock-input nodata">暂无借款类型</view>
                     </view>
                 </view>
-                <view class="form-line"/>
+                <view class="form-line" />
                 <view class="form-row" tt:if="{{result.billApEntityList.length}}" tt:key="index">
                     <view class="form-row-label">
                         <text class="require">*</text>
@@ -106,12 +109,12 @@
                     </view>
                     <view class="form-row-content auxpty-wrapper" tt:for="{{result.billApEntityList}}" tt:key="index">
                         <view class="mock-input left ellipsis">{{item.auxptyName}}</view>
-                        <view class="mock-input right ellipsis"
-                              tt:if="{{item.auxptyDetailName}}">{{item.auxptyDetailName}}</view>
+                        <view class="mock-input right ellipsis" tt:if="{{item.auxptyDetailName}}">
+                            {{item.auxptyDetailName}}</view>
                         <view class="mock-input right ellipsis" tt:else>无</view>
                     </view>
                 </view>
-                <view class="form-line" tt:if="{{result.billApEntityList.length}}"/>
+                <view class="form-line" tt:if="{{result.billApEntityList.length}}" />
                 <view class="form-row">
                     <view class="form-row-label">
                         <text class="require">*</text>
@@ -120,9 +123,9 @@
                     <view class="form-row-content">
                         <view data-name="businessDateTime">{{result.businessDateTime}}</view>
                     </view>
-                    <image src="../../images/date-icon.png" mode="scaleToFill" class="date-icon"/>
+                    <image src="../../images/date-icon.png" mode="scaleToFill" class="date-icon" />
                 </view>
-                <view class="form-line"/>
+                <view class="form-line" />
                 <block tt:if="{{isCapitalTypeStart}}">
                     <view class="form-row">
                         <view class="form-row-label">
@@ -130,19 +133,19 @@
                             资金计划类型
                         </view>
                         <view class="form-row-content">
-                            <view tt:if="{{result.capitalTypeDetailId}}"
-                                  class="mock-input">{{result.capitalTypeDetailName}}</view>
+                            <view tt:if="{{result.capitalTypeDetailId}}" class="mock-input">
+                                {{result.capitalTypeDetailName}}</view>
                             <view tt:else class="mock-input nodata">暂无资金计划类型</view>
                         </view>
                     </view>
-                    <view class="form-line"/>
+                    <view class="form-line" />
                 </block>
                 <view class="form-row invoice-wrapper">
                     <view class="form-row-label">
                         <text class="require">*</text>
                         是否有发票
                     </view>
-                    <switch disabled checked="{{!!result.invoice}}" color="#1f76d8"/>
+                    <switch disabled checked="{{!!result.invoice}}" color="#1f76d8" />
                 </view>
             </view>
             <!--      外币        -->
@@ -158,7 +161,7 @@
                             <view>{{currencyTypeName}}</view>
                         </view>
                     </view>
-                    <view class="form-line"/>
+                    <view class="form-line" />
                     <view class="form-row">
                         <view class="form-row-label">
                             <text class="require">*</text>
@@ -168,7 +171,7 @@
                             <view>{{baseCurrencyName}}</view>
                         </view>
                     </view>
-                    <view class="form-line"/>
+                    <view class="form-line" />
                     <view class="form-row">
                         <view class="form-row-label">
                             <text class="require">*</text>
@@ -178,7 +181,7 @@
                             <view>{{exchangeRate}}</view>
                         </view>
                     </view>
-                    <view class="form-line"/>
+                    <view class="form-line" />
                 </view>
             </view>
 
@@ -191,7 +194,7 @@
                                 <text tt:if="{{multiCurrency}}">{{item.originBorrowAmount}}</text>
                                 <text tt:else>{{item.borrowAmount}}</text>
                             </view>
-                            <view class="borrow-line"/>
+                            <view class="borrow-line" />
                             <block>
                                 <view tt:if="{{item.remark && item.remark !== 'null'}}" class="form-row-content remark">
                                     <text>{{item.remark}}</text>
@@ -199,7 +202,7 @@
                                 <view tt:else class="form-row-content remark">无</view>
                             </block>
                         </view>
-                        <view class="form-line"/>
+                        <view class="form-line" />
                     </view>
                 </view>
             </view>
@@ -209,14 +212,14 @@
                     <view class="file-list">
                         <view class="file-item" tt:for="{{result.billFiles}}" tt:key="index">
                             <view class="form-row">
-                                <view class="form-row-content ellipsis" bindtap="previewFile"
-                                      data-url="{{item.uri}}">{{item.name}}</view>
+                                <view class="form-row-content ellipsis" bindtap="previewFile" data-url="{{item.uri}}">
+                                    {{item.name}}</view>
                                 <view class="form-row-content img-wrapper" bindtap="previewFile"
-                                      data-url="{{item.uri}}">
-                                    <image src="{{item.uri}}" class="img"/>
+                                    data-url="{{item.uri}}">
+                                    <image src="{{item.uri}}" class="img" />
                                 </view>
                             </view>
-                            <view class="form-line"/>
+                            <view class="form-line" />
                         </view>
                     </view>
                 </view>
@@ -232,41 +235,43 @@
                                     <view class="view-avatar-block">
                                         <view class="view-avatar">
                                             <image tt:if="{{item.children.length && item.activityType == 'userTask'}}"
-                                                   src="../../images/approval.png"
-                                                   class="view-avatar view-avatar-bg"></image>
-                                            <image tt:if="{{item.children.length && item.activityType == 'serviceTask'}}"
-                                                   src="../../images/copy1.png"
-                                                   class="view-avatar view-avatar-bg"></image>
-                                            <view tt:if="{{!item.children.length}}"
-                                                  class="view-avatar view-avatar-bg">{{item.assigneeNameSlice}}</view>
+                                                src="../../images/approval.png" class="view-avatar view-avatar-bg">
+                                            </image>
+                                            <image
+                                                tt:if="{{item.children.length && item.activityType == 'serviceTask'}}"
+                                                src="../../images/copy1.png" class="view-avatar view-avatar-bg"></image>
+                                            <view tt:if="{{!item.children.length}}" class="view-avatar view-avatar-bg">
+                                                {{item.assigneeNameSlice}}</view>
                                         </view>
                                         <image tt:if="{{item.status == 2}}" src="../../images/success.png"
-                                               class="view-avatar-icon"></image>
+                                            class="view-avatar-icon"></image>
                                         <image tt:if="{{item.status == 1}}" src="../../images/3.png"
-                                               class="view-avatar-icon"></image>
+                                            class="view-avatar-icon"></image>
                                         <image tt:if="{{item.status == -1 || item.status == -2}}"
-                                               src="../../images/reject.png" class="view-avatar-icon"></image>
+                                            src="../../images/reject.png" class="view-avatar-icon"></image>
                                     </view>
                                     <view tt:if="{{item.status == 0 || item.status == 1}}"
-                                          class="view-status-dotted-line"></view>
+                                        class="view-status-dotted-line"></view>
                                     <view tt:else class="view-status-line"></view>
                                 </view>
                                 <view class="view-status-content">
                                     <view class="view-progress-status">{{item.activityName}}</view>
                                     <view tt:if="{{item.children.length && item.activityType == 'userTask'}}"
-                                          class="view-progress-user">{{item.children.length}}
-                                        人{{item.signType == 'and' ? '会签' : '或签'}}{{statusObj[item.status] ? '（' + statusObj[item.status] + '）' : ''}}</view>
+                                        class="view-progress-user">{{item.children.length}}
+                                        人{{item.signType == 'and' ? '会签' : '或签'}}{{statusObj[item.status] ? '（' +
+                                        statusObj[item.status] + '）' : ''}}</view>
                                     <view tt:if="{{item.children.length && item.activityType == 'serviceTask'}}"
-                                          class="view-progress-user">抄送{{item.children.length}}人
+                                        class="view-progress-user">抄送{{item.children.length}}人
                                     </view>
-                                    <view tt:if="{{!item.children.length}}"
-                                          class="view-progress-user">{{item.assigneeName}}{{statusObj[item.status] ? '（' + statusObj[item.status] + '）' : ''}}</view>
-                                    <view tt:if="{{item.comment}}"
-                                          class="view-progress-user view-progress-content">{{item.comment}}</view>
+                                    <view tt:if="{{!item.children.length}}" class="view-progress-user">
+                                        {{item.assigneeName}}{{statusObj[item.status] ? '（' + statusObj[item.status] +
+                                        '）' : ''}}</view>
+                                    <view tt:if="{{item.comment}}" class="view-progress-user view-progress-content">
+                                        {{item.comment}}</view>
                                     <view class="show-user-list" tt:if="{{item.showUserList}}">
                                         <block tt:if="{{item.children.length}}">
                                             <view class="user-block" tt:for="{{item.children}}" tt:key="index"
-                                                  tt:for-item="user">
+                                                tt:for-item="user">
                                                 <view class="user-bg">{{user.assigneeNameSlice}}</view>
                                                 <view class="user-name">{{user.assigneeName}}</view>
                                             </view>
@@ -276,9 +281,9 @@
                             </view>
                             <view class="progress-right" tt:if="{{item.children.length}}">
                                 <view bindtap="toggleUserList" data-index="{{index}}" tt:if="{{item.showUserList}}"
-                                      class="toggle-user-list down"></view>
+                                    class="toggle-user-list down"></view>
                                 <view bindtap="toggleUserList" data-index="{{index}}" tt:else
-                                      class="toggle-user-list up"></view>
+                                    class="toggle-user-list up"></view>
                                 <view tt:if="{{item.endTime}}">{{item.endTime}}</view>
                             </view>
                             <view tt:else class="progress-right">
@@ -299,37 +304,39 @@
                                     <view class="view-avatar-block">
                                         <view class="view-avatar">
                                             <image tt:if="{{item.children.length && item.activityType == 'userTask'}}"
-                                                   src="../../images/approval.png"
-                                                   class="view-avatar view-avatar-bg"></image>
-                                            <image tt:if="{{item.children.length && item.activityType == 'serviceTask'}}"
-                                                   src="../../images/copy1.png"
-                                                   class="view-avatar view-avatar-bg"></image>
-                                            <view tt:if="{{!item.children.length}}"
-                                                  class="view-avatar view-avatar-bg">{{item.assigneeNameSlice}}</view>
+                                                src="../../images/approval.png" class="view-avatar view-avatar-bg">
+                                            </image>
+                                            <image
+                                                tt:if="{{item.children.length && item.activityType == 'serviceTask'}}"
+                                                src="../../images/copy1.png" class="view-avatar view-avatar-bg"></image>
+                                            <view tt:if="{{!item.children.length}}" class="view-avatar view-avatar-bg">
+                                                {{item.assigneeNameSlice}}</view>
                                         </view>
                                         <image tt:if="{{item.status == 2}}" src="../../images/success.png"
-                                               class="view-avatar-icon"></image>
+                                            class="view-avatar-icon"></image>
                                         <image tt:if="{{item.status == 1}}" src="../../images/3.png"
-                                               class="view-avatar-icon"></image>
+                                            class="view-avatar-icon"></image>
                                         <image tt:if="{{item.status == -1 || item.status == -2}}"
-                                               src="../../images/reject.png" class="view-avatar-icon"></image>
+                                            src="../../images/reject.png" class="view-avatar-icon"></image>
                                     </view>
                                     <view tt:if="{{item.status == 0 || item.status == 1}}"
-                                          class="view-status-dotted-line"></view>
+                                        class="view-status-dotted-line"></view>
                                     <view tt:else class="view-status-line"></view>
                                 </view>
                                 <view class="view-status-content">
                                     <view class="view-progress-status">{{item.activityName}}</view>
                                     <view tt:if="{{item.children.length && item.activityType == 'userTask'}}"
-                                          class="view-progress-user">{{item.children.length}}
-                                        人{{item.signType == 'and' ? '会签' : '或签'}}{{statusObj[item.status] ? '（' + statusObj[item.status] + '）' : ''}}</view>
+                                        class="view-progress-user">{{item.children.length}}
+                                        人{{item.signType == 'and' ? '会签' : '或签'}}{{statusObj[item.status] ? '（' +
+                                        statusObj[item.status] + '）' : ''}}</view>
                                     <view tt:if="{{item.children.length && item.activityType == 'serviceTask'}}"
-                                          class="view-progress-user">抄送{{item.children.length}}人
+                                        class="view-progress-user">抄送{{item.children.length}}人
                                     </view>
-                                    <view tt:if="{{!item.children.length}}"
-                                          class="view-progress-user">{{item.assigneeName}}{{statusObj[item.status] ? '（' + statusObj[item.status] + '）' : ''}}</view>
-                                    <view tt:if="{{item.comment}}"
-                                          class="view-progress-user view-progress-content">{{item.comment}}</view>
+                                    <view tt:if="{{!item.children.length}}" class="view-progress-user">
+                                        {{item.assigneeName}}{{statusObj[item.status] ? '（' + statusObj[item.status] +
+                                        '）' : ''}}</view>
+                                    <view tt:if="{{item.comment}}" class="view-progress-user view-progress-content">
+                                        {{item.comment}}</view>
                                     <view class="show-user-list" tt:if="{{item.showUserList}}">
                                         <block tt:if="{{item.children.length}}">
                                             <view class="user-block" tt:for="{{item.children}}" tt:for-item="user">
@@ -341,10 +348,10 @@
                                 </view>
                             </view>
                             <view class="progress-right" tt:if="{{item.children.length}}">
-                                <view bindtap="toggleHistoryList" data-index="{{index}}"
-                                      tt:if="{{item.showUserList}}" class="toggle-user-list down"></view>
+                                <view bindtap="toggleHistoryList" data-index="{{index}}" tt:if="{{item.showUserList}}"
+                                    class="toggle-user-list down"></view>
                                 <view bindtap="toggleHistoryList" data-index="{{index}}" tt:else
-                                      class="toggle-user-list up"></view>
+                                    class="toggle-user-list up"></view>
                                 <view tt:if="{{item.endTime}}">{{item.endTime}}</view>
                             </view>
                             <view tt:else class="progress-right">
@@ -354,21 +361,19 @@
                     </view>
                 </view>
             </block>
-            <view class="title"/>
+            <view class="title" />
             <view class="block-wrapper submit-info-wrapper">
                 <view tt:if="{{multiCurrency}}">
                     <view class="total">
                         <view style="display:flex;align-items: center">
-                            <image src="../../images/jiekuanTotal-icon.png" mode="scaleToFill"
-                                   class="jiekuan-icon"/>
+                            <image src="../../images/jiekuanTotal-icon.png" mode="scaleToFill" class="jiekuan-icon" />
                             <text>借款合计(原币)：</text>
                         </view>
                         <text class="total-word">{{result.originAmount}}</text>
                     </view>
                     <view class="total">
                         <view style="display:flex;align-items: center">
-                            <image src="../../images/jiekuanTotal-icon.png" mode="scaleToFill"
-                                   class="jiekuan-icon"/>
+                            <image src="../../images/jiekuanTotal-icon.png" mode="scaleToFill" class="jiekuan-icon" />
                             <text>借款合计(本位币)：</text>
                         </view>
                         <text class="total-word">{{result.amount}}</text>
@@ -376,7 +381,7 @@
                 </view>
                 <view tt:else class="total">
                     <view style="display:flex;align-items: center">
-                        <image src="../../images/jiekuanTotal-icon.png" mode="scaleToFill" class="jiekuan-icon"/>
+                        <image src="../../images/jiekuanTotal-icon.png" mode="scaleToFill" class="jiekuan-icon" />
                         <text>借款合计：</text>
                     </view>
                     <text class="total-word">{{result.amount}}</text>
@@ -389,15 +394,15 @@
                         <view class="progress-left">
                             <view class="avatar-wrapper">
                                 <view class="avatar-block">
-                                    <image src="{{item.avatar}}" class="avatar"/>
+                                    <image src="{{item.avatar}}" class="avatar" />
                                     <image class="status-icon" tt:if="{{item.operationResult == 2}}"
-                                           src="../../images/1.png"/>
+                                        src="../../images/1.png" />
                                     <image class="status-icon" tt:if="{{item.operationResult == 3}}"
-                                           src="../../images/2.png"/>
+                                        src="../../images/2.png" />
                                     <image class="status-icon" tt:if="{{item.operationResult == 1}}"
-                                           src="../../images/3.png"/>
+                                        src="../../images/3.png" />
                                 </view>
-                                <view class="status-line"/>
+                                <view class="status-line" />
                             </view>
                             <view class="status-content">
                                 <view class="progress-status">{{item.operationName}}</view>
@@ -413,7 +418,7 @@
                 <view class="cc-wrapper" tt:if="{{process.cc.length}}">
                     <view class="cc-title">抄送人</view>
                     <view tt:for="{{process.cc}}" tt:key="index" tt:if="{{process.cc.length}}" class="cc-item">
-                        <image class="small-avatar" src="{{item.avatar}}" tt:if="{{item.avatar}}"/>
+                        <image class="small-avatar" src="{{item.avatar}}" tt:if="{{item.avatar}}" />
                         <view class="small-avatar" tt:else>{{item.realName}}</view>
                         <view class="small-name">{{item.userName}}</view>
                     </view>
@@ -431,11 +436,12 @@
     <view class="add-comment-page" animation="{{animationInfo}}" hidden="{{dialogHidden}}">
         <view class="title">批复意见</view>
         <view class="comment-wrapper">
-            <textarea tt:if="{{showTextArea}}" maxlength="140" bindinput="commentInput" class="comment-input" placeholder="请输入内容"></textarea>
+            <textarea tt:if="{{showTextArea}}" maxlength="140" bindinput="commentInput" class="comment-input"
+                placeholder="请输入内容"></textarea>
         </view>
         <view class="oa-submit-btn-wrapper {{isPhoneXSeries ? 'iphoneX' : ''}}">
-            <view class="oa-submit {{approvalType === 'reject' ? 'reject' : 'approval'}}"
-                  bindtap="submitOa">{{ approvalType === 'reject' ? '驳回' : '同意'}}</view>
+            <view class="oa-submit {{approvalType === 'reject' ? 'reject' : 'approval'}}" bindtap="submitOa">{{
+                approvalType === 'reject' ? '驳回' : '同意'}}</view>
         </view>
     </view>
     <view class="oa-mask" hidden="{{maskHidden}}" bindtap="onCommentHide"></view>
