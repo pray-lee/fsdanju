@@ -86,11 +86,11 @@ Page({
             billFilesObj: [],
             submitDate: moment().format('YYYY-MM-DD'),
             applicantType: 10,
-            invoice: 0,
             auxpropertyNames: '',
             businessDateTime: moment().format('YYYY-MM-DD'),
             amount: 0,
             status: 20,
+            invoice: 0,
             userName: '',
             billCode: '',
             remark: '',
@@ -241,14 +241,6 @@ Page({
         });
     },
 
-    radioChange(e) {
-        this.setData({
-            submitData: {
-                ...this.data.submitData,
-                invoice: e.detail.value ? 1 : 0
-            }
-        });
-    },
 
     bindObjPickerChange(e) {
         var name = e.currentTarget.dataset.name;
