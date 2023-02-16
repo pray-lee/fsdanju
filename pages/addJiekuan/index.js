@@ -1,7 +1,7 @@
 import moment from 'moment';
 import NP from 'number-precision'
 import '../../util/handleLodash';
-import {cloneDeep as clone} from 'lodash';
+import {cloneDeep as clone, isArray} from 'lodash';
 import {getErrorMessage, submitSuccess, formatNumber, request} from "../../util/getErrorMessage";
 
 var app = getApp();
@@ -137,6 +137,56 @@ Page({
         }
     },
 
+    handleSubmitData(data) {
+        const standardData = {
+            id: '',
+            submitDate: '',
+            applicantType: '',
+            businessDateTime: '',
+            amount: '',
+            status: '',
+            invoice: '',
+            billCode: '',
+            remark: '',
+            // baseCurrency: '',
+            // baseCurrencyName: '',
+            exchangeRate: '',
+            currencyTypeId: '',
+            applicantId: '',
+            accountbookId: '',
+            subjectId: '',
+            originAmount: '',
+            submitterDepartmentId: '',
+            incomeBankAccount: '',
+            incomeBankName: '',
+            // totalAmount: '',
+            billDetailList: [],
+            billApEntityList: [],
+            billFiles: []
+        }
+        let submitData = {}
+        Object.keys(standardData).forEach(key => {
+            if(isArray(standardData[key])) {
+                submitData[key] = clone(data[`${key}Obj`])
+                console.log(submitData[key], 'submitData[key]')
+                submitData[key].forEach(item => {
+                    Object.keys(item).forEach(delKey => {
+                        if(delKey.indexOf('format') !== -1 || delKey.indexOf('Format') !== -1 || delKey.indexOf('auxptyDetailName') !== -1) {
+                            delete item[delKey]
+                        }
+                    })
+                })
+            }else if(key.indexOf('Date') !== -1) {
+                submitData[key] = `${data[key]} 00:00:00`
+            }else{
+                submitData[key] = data[key]
+            }
+        })
+        // 补充一个id
+        submitData.id = this.data.billId || ''
+        return submitData
+    },
+
     formSubmit(e) {
         // 判断有币种的情况下，如果汇率为零，则不能提交
         if (this.data.multiCurrency) {
@@ -175,58 +225,58 @@ Page({
                 ...this.data.submitData,
                 status
             }
-        }); // 删除辅助核算的信息，然后通过formatSubmitData重新赋值
+        });
 
-        console.log(this.data.submitData);
+        // 删除辅助核算的信息，然后通过formatSubmitData重新赋值
         Object.keys(this.data.submitData).forEach(item => {
-            console.log(item);
-
             if (item.indexOf('billApEntityList[') !== -1) {
                 delete this.data.submitData[item];
             }
-        }); // 处理一下提交格式
-
-        this.formatSubmitData(this.data.submitData.billDetailListObj, 'billDetailList');
-        this.formatSubmitData(this.data.submitData.billApEntityListObj, 'billApEntityList');
-        this.formatSubmitData(this.data.submitData.billFilesObj, 'billFiles');
-        Object.keys(this.data.submitData).forEach(item => {
-            if (item.indexOf('billApEntityListObj') !== -1) {
-                delete this.data.submitData[item];
-            }
-            if (item.indexOf('billDetailListObj') !== -1) {
-                delete this.data.submitData[item];
-            }
-            if (item.indexOf('billFilesObj') !== -1) {
-                delete this.data.submitData[item];
-            }
-            if(this.data.submitData[item] == null) {
-                delete this.data.submitData[item]
-            }
         });
+
         // 处理一下提交格式
-        console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~');
-        console.log(this.data);
-        console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~');
+        // this.formatSubmitData(this.data.submitData.billDetailListObj, 'billDetailList');
+        // this.formatSubmitData(this.data.submitData.billApEntityListObj, 'billApEntityList');
+        // this.formatSubmitData(this.data.submitData.billFilesObj, 'billFiles');
+        // Object.keys(this.data.submitData).forEach(item => {
+        //     if (item.indexOf('billApEntityListObj') !== -1) {
+        //         delete this.data.submitData[item];
+        //     }
+        //     if (item.indexOf('billDetailListObj') !== -1) {
+        //         delete this.data.submitData[item];
+        //     }
+        //     if (item.indexOf('billFilesObj') !== -1) {
+        //         delete this.data.submitData[item];
+        //     }
+        //     if(this.data.submitData[item] == null) {
+        //         delete this.data.submitData[item]
+        //     }
+        // });
+
         this.addLoading();
         var url = '';
 
         if (this.data.type === 'add') {
-            url = app.globalData.url + 'borrowBillController.do?doAdd';
+            url = app.globalData.url + 'borrowBillController.do?doAddByJson';
         } else {
-            url = app.globalData.url + 'borrowBillController.do?doUpdate&id=' + this.data.billId;
+            url = app.globalData.url + 'borrowBillController.do?doUpdateByJson&id=' + this.data.billId;
+        }
+        // url上补充外币
+        if (this.data.submitData.isMultiCurrency) {
+            url = url + '&isMultiCurrency=' + this.data.submitData.isMultiCurrency;
         }
 
         request({
             hideLoading: this.hideLoading,
             url,
             method: 'POST',
-            data: this.data.submitData,
+            headers:  {'Content-Type': 'application/json;charset=utf-8'},
+            data: this.handleSubmitData(this.data.submitData),
             success: res => {
                 if (res.data && typeof res.data == 'string') {
                     getErrorMessage(res.data);
-                } // 提交成功
-
-
+                }
+                // 提交成功
                 if (res.data.success) {
                     submitSuccess();
                 }

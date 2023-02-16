@@ -1,7 +1,7 @@
 import moment from "moment";
 import NP from "number-precision";
 import '../../util/handleLodash';
-import {cloneDeep as clone} from 'lodash';
+import {cloneDeep as clone, isArray} from 'lodash';
 import {getErrorMessage, submitSuccess, formatNumber, validFn, request} from "../../util/getErrorMessage";
 
 var app = getApp();
@@ -120,51 +120,164 @@ Page({
     },
 
     // 把baoxiaoList的数据，重组一下，拼在submitData里提交
-    formatSubmitData(array, name) {
-        console.log(array, 'array');
-        array.forEach((item, index) => {
-            Object.keys(item).forEach(keys => {
-                if (item[keys] instanceof Array && keys.indexOf('billDetail') !== -1 && keys.indexOf('extraMessage') < 0 && keys.indexOf('subjectExtraConf') < 0) {
-                    item[keys].forEach((arrItem, arrIndex) => {
-                        Object.keys(arrItem).forEach(arrKeys => {
-                            console.log(arrKeys, 'arrKeys');
-                            this.setData({
-                                submitData: {
-                                    ...this.data.submitData,
-                                    [`${name}[${index}].${keys.slice(0, -3)}[${arrIndex}].${arrKeys}`]: arrItem[arrKeys]
-                                }
-                            });
-                        });
-                    });
-                } else {
-                    // 如果是附加信息，转换成字符串
-                    if (keys == 'extraMessage') {
-                        this.setData({
-                            submitData: {
-                                ...this.data.submitData,
-                                [`${name}[${index}].${keys}`]: JSON.stringify(item[keys])
+    // formatSubmitData(array, name) {
+    //     console.log(array, 'array');
+    //     array.forEach((item, index) => {
+    //         Object.keys(item).forEach(keys => {
+    //             if (item[keys] instanceof Array && keys.indexOf('billDetail') !== -1 && keys.indexOf('extraMessage') < 0 && keys.indexOf('subjectExtraConf') < 0) {
+    //                 item[keys].forEach((arrItem, arrIndex) => {
+    //                     Object.keys(arrItem).forEach(arrKeys => {
+    //                         console.log(arrKeys, 'arrKeys');
+    //                         this.setData({
+    //                             submitData: {
+    //                                 ...this.data.submitData,
+    //                                 [`${name}[${index}].${keys.slice(0, -3)}[${arrIndex}].${arrKeys}`]: arrItem[arrKeys]
+    //                             }
+    //                         });
+    //                     });
+    //                 });
+    //             } else {
+    //                 // 如果是附加信息，转换成字符串
+    //                 if (keys == 'extraMessage') {
+    //                     this.setData({
+    //                         submitData: {
+    //                             ...this.data.submitData,
+    //                             [`${name}[${index}].${keys}`]: JSON.stringify(item[keys])
+    //                         }
+    //                     });
+    //                 } else {
+    //                     if (keys === 'subjectExtraConf' && typeof item[keys] === 'object') {
+    //                         this.setData({
+    //                             submitData: {
+    //                                 ...this.data.submitData,
+    //                                 [`${name}[${index}].${keys}`]: JSON.stringify(item[keys])
+    //                             }
+    //                         });
+    //                     } else {
+    //                         this.setData({
+    //                             submitData: {
+    //                                 ...this.data.submitData,
+    //                                 [`${name}[${index}].${keys}`]: item[keys]
+    //                             }
+    //                         });
+    //                     }
+    //                 }
+    //             }
+    //         });
+    //     });
+    // },
+
+    handleSubmitData(data) {
+        const standardData = {
+            accountbookId: '',
+            applicantId: '',
+            applicationAmount: '',
+            baseCurrency: '',
+            billCode: '',
+            billDetailList: [],
+            borrowBillList: [],
+            billFiles: [],
+            businessDateTime: '',
+            currencyTypeId: '',
+            exchangeRate: '',
+            incomeBankAccount: '',
+            incomeBankName: '',
+            invoice: '',
+            originApplicationAmount: '',
+            originTotalAmount: '',
+            originVerificationAmount: '',
+            reimbursementType: '',
+            remark: '',
+            status: '',
+            submitDate: '',
+            submitterDepartmentId: '',
+            taxpayerType: '',
+            totalAmount: '',
+            verificationAmount: ''
+        }
+
+        // 报销详情模版
+        const standardBillDetail = {
+            invoiceInfoId: '',
+            subjectId: '',
+            auxpropertyIds: '',
+            auxpropertyNames: '',
+            billDetailApEntityList: [],
+            trueSubjectId: '',
+            trueAuxpropertyIds: '',
+            trueAuxpropertyNames: '',
+            billDetailTrueApEntityList: [],
+            subjectExtraDetailId: '',
+            subjectExtraId: '',
+            extraMessage: '',
+            subjectExtraConf: '',
+            originApplicationAmount: '',
+            applicationAmount: '',
+            invoiceType: '',
+            taxRate: '',
+            remark: '',
+        }
+
+        // 核销借款模版
+        const standardBorrowDetail = {
+            id: '',
+            billDetailId: '',
+            originApplicationAmount: '',
+            applicationAmount: ''
+        }
+
+        let submitData = {}
+        Object.keys(standardData).forEach(key => {
+            if (isArray(standardData[key])) {
+                if (key === 'billDetailList') {
+                    submitData[key] = clone(this.data.baoxiaoList).map(item => {
+                        let baoxiaoDetail = {}
+                        Object.keys(standardBillDetail).forEach(field => {
+                            if (field.indexOf('ApEntityList') !== -1) {
+                                baoxiaoDetail[field] = item[`${field}Obj`]
+                                baoxiaoDetail[field].forEach(auxDetail => {
+                                    Object.keys(auxDetail).forEach(auxField => {
+                                        if(auxField.indexOf('Name') !== -1) {
+                                            delete auxDetail[auxField]
+                                        }
+                                    })
+                                })
+                            }else{
+                                baoxiaoDetail[field] = item[field]
                             }
-                        });
-                    } else {
-                        if (keys === 'subjectExtraConf' && typeof item[keys] === 'object') {
-                            this.setData({
-                                submitData: {
-                                    ...this.data.submitData,
-                                    [`${name}[${index}].${keys}`]: JSON.stringify(item[keys])
-                                }
-                            });
-                        } else {
-                            this.setData({
-                                submitData: {
-                                    ...this.data.submitData,
-                                    [`${name}[${index}].${keys}`]: item[keys]
-                                }
-                            });
-                        }
-                    }
+                        })
+                        return baoxiaoDetail
+                    })
                 }
-            });
-        });
+                if (key === 'borrowBillList') {
+                    submitData[key] = clone(this.data.importList).map(item => {
+                        if(!!item) {
+                            let borrowDetail = {}
+                            const {id, billDetailId, applicationAmount} = item
+                            if(this.data.multiCurrency) {
+                                return {
+                                    id,
+                                    billDetailId,
+                                    originApplicationAmount: item.applicationAmount
+                                }
+                            }
+                            return item
+                        }
+                    })
+                }
+                if (key === 'billFiles') {
+                    submitData[key] = clone(data[`${key}Obj`])
+                }
+            } else if (key.indexOf('Date') !== -1) {
+                submitData[key] = `${data[key]} 00:00:00`
+            } else {
+                submitData[key] = data[key]
+            }
+        })
+        // 补充一个id
+        submitData.id = this.data.billId || ''
+        console.log(submitData, 'ssssssssssssssssssssssssssssssssssssssssssssss')
+        return submitData
     },
 
     addLoading() {
@@ -174,7 +287,6 @@ Page({
                 mask: true
             });
         }
-
         app.globalData.loadingCount++;
     },
 
@@ -230,36 +342,36 @@ Page({
             if (item.indexOf('billDetailList') !== -1) {
                 delete this.data.submitData[item];
             }
-            if(this.data.submitData[item] === null) {
+            if (this.data.submitData[item] === null) {
                 delete this.data.submitData[item]
             }
-        }); // 处理一下提交格式
-
-        this.formatSubmitData(this.data.baoxiaoList, 'billDetailList'); // 提交的时候删除借款科目
-
-        const tempData = clone(this.data.importList);
-        tempData.forEach(item => {
-            if (this.data.multiCurrency) {
-                delete item.applicationAmount
-                delete item.formatApplicationAmount
-            }
-            Object.keys(item).forEach(key => {
-                if(item[key] === null) {
-                    delete item[key]
-                }
-            })
-            delete item['subject.fullSubjectName']
-            delete item['billApXlsList']
-            delete item['billTrueApXlsList']
-            delete item['departDetail']
-            delete item['subject']
-            delete item['trueSubject']
         });
-        this.formatSubmitData(tempData, 'borrowBillList');
-        this.formatSubmitData(this.data.submitData.billFilesObj, 'billFiles');
-        console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~');
-        console.log(this.data);
-        console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~');
+        // 处理一下提交格式
+
+        // this.formatSubmitData(this.data.baoxiaoList, 'billDetailList'); // 提交的时候删除借款科目
+
+        // const tempData = clone(this.data.importList);
+        // tempData.forEach(item => {
+        //     if (this.data.multiCurrency) {
+        //         delete item.applicationAmount
+        //         delete item.formatApplicationAmount
+        //     }
+        //     Object.keys(item).forEach(key => {
+        //         if(item[key] === null) {
+        //             delete item[key]
+        //         }
+        //     })
+        //     delete item['subject.fullSubjectName']
+        //     delete item['billApXlsList']
+        //     delete item['billTrueApXlsList']
+        //     delete item['departDetail']
+        //     delete item['subject']
+        //     delete item['trueSubject']
+        // });
+        // this.formatSubmitData(tempData, 'borrowBillList');
+        // this.formatSubmitData(this.data.submitData.billFilesObj, 'billFiles');
+        this.handleSubmitData(this.data.submitData)
+        return
         this.addLoading();
         var url = '';
 
@@ -267,6 +379,10 @@ Page({
             url = app.globalData.url + 'reimbursementBillController.do?doAdd';
         } else {
             url = app.globalData.url + 'reimbursementBillController.do?doUpdate&id=' + this.data.billId;
+        }
+        // url上补充外币
+        if (this.data.submitData.isMultiCurrency) {
+            url = url + '&isMultiCurrency=' + this.data.submitData.isMultiCurrency;
         }
 
         request({
@@ -1659,7 +1775,7 @@ Page({
                 originVerificationAmount: data.originVerificationAmount,
                 originFormatVerificationAmount: formatNumber(Number(data.originVerificationAmount).toFixed(2)),
                 originTotalAmount: data.originTotalAmount,
-                originFormatTotalAmount:formatNumber(Number(data.originTotalAmount).toFixed(2)),
+                originFormatTotalAmount: formatNumber(Number(data.originTotalAmount).toFixed(2)),
                 exchangeRate: data.exchangeRate,
                 // 报销类型
                 reimbursementType: data.reimbursementType || '',
@@ -1805,7 +1921,7 @@ Page({
                                 obj.formatApplicationAmount = formatNumber(Number(item.applicationAmount).toFixed(2))
                             }
                             // 发票
-                            if(item.invoiceInfoId && item.invoiceInfoId !== 'null') {
+                            if (item.invoiceInfoId && item.invoiceInfoId !== 'null') {
                                 obj.invoiceInfoId = item.invoiceInfoId
                             }
                             if (!!item.extraMessage) {
@@ -2069,7 +2185,7 @@ Page({
                 }
             })
         }
-        if(totalAmount != oldTotalAmount) {
+        if (totalAmount != oldTotalAmount) {
             this.showOaUserNodeListUseField(['accountbookId', 'submitterDepartmentId', 'baoxiaoList', 'totalAmount', 'reimbursementType'])
         }
     },
