@@ -605,7 +605,7 @@ Page({
                 const baoxiaoDetail = res.data;
                 //=============== 外币 =================
                 if (this.data.multiCurrency) {
-                    baoxiaoDetail.forEach(item => {
+                    baoxiaoDetail && baoxiaoDetail.forEach(item => {
                         item.originApplicationAmount = item.applicationAmount
                         item.applicationAmount = ''
                         item.originFormatApplicationAmount = formatNumber(Number(item.originApplicationAmount).toFixed(2))
