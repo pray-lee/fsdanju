@@ -179,7 +179,7 @@ Page({
             }else if(key.indexOf('Date') !== -1) {
                 submitData[key] = `${data[key]} 00:00:00`
             }else{
-                submitData[key] = data[key]
+                submitData[key] = data[key] ?? ''
             }
         })
         // 补充一个id

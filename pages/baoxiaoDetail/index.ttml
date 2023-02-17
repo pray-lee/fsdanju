@@ -30,9 +30,7 @@
             </view>
             <view class="form-row" tt:else bindtap="openExtraInfo" data-extraId="{{baoxiaoDetail.subjectExtraId}}">
                 <view class="form-row-label"><text class="require">*</text>申请报销金额</view>
-
-
-                <view class="mock-input" tt:if="{{baoxiaoDetail.applicationAmount}}">{{baoxiaoDetail.formatApplicationAmount}}</view>
+                <view class="mock-input" tt:if="{{baoxiaoDetail.applicationAmount}}">{{baoxiaoDetail.applicationAmount}}</view>
                 <view class="mock-input nodata" tt:else>请输入报销金额</view>
                 <image class="extra-icon" mode="scaleToFill" src="../../images/extra-icon.png"/>
             </view>

@@ -171,8 +171,8 @@ Page({
         const standardData = {
             accountbookId: '',
             applicantId: '',
+            applicantType: '',
             applicationAmount: '',
-            baseCurrency: '',
             billCode: '',
             billDetailList: [],
             borrowBillList: [],
@@ -191,7 +191,6 @@ Page({
             status: '',
             submitDate: '',
             submitterDepartmentId: '',
-            taxpayerType: '',
             totalAmount: '',
             verificationAmount: ''
         }
@@ -206,7 +205,7 @@ Page({
             trueSubjectId: '',
             trueAuxpropertyIds: '',
             trueAuxpropertyNames: '',
-            billDetailTrueApEntityList: [],
+            // billDetailTrueApEntityList: [],
             subjectExtraDetailId: '',
             subjectExtraId: '',
             extraMessage: '',
@@ -242,8 +241,10 @@ Page({
                                         }
                                     })
                                 })
+                            }else if(field.indexOf('extraMessage') !== -1 || field.indexOf('subjectExtraConf') !== -1) {
+                                baoxiaoDetail[field] = JSON.stringify(item[field]) || ''
                             }else{
-                                baoxiaoDetail[field] = item[field]
+                                baoxiaoDetail[field] = item[field] || ''
                             }
                         })
                         return baoxiaoDetail
@@ -253,15 +254,19 @@ Page({
                     submitData[key] = clone(this.data.importList).map(item => {
                         if(!!item) {
                             let borrowDetail = {}
-                            const {id, billDetailId, applicationAmount} = item
+                            const {id, billDetailId} = item
                             if(this.data.multiCurrency) {
                                 return {
                                     id,
                                     billDetailId,
-                                    originApplicationAmount: item.applicationAmount
+                                    originApplicationAmount: item.originApplicationAmount
                                 }
                             }
-                            return item
+                            return {
+                                id,
+                                billDetailId,
+                                applicationAmount: item.applicationAmount
+                            }
                         }
                     })
                 }
@@ -271,7 +276,7 @@ Page({
             } else if (key.indexOf('Date') !== -1) {
                 submitData[key] = `${data[key]} 00:00:00`
             } else {
-                submitData[key] = data[key]
+                submitData[key] = data[key] ?? ''
             }
         })
         // 补充一个id
@@ -370,15 +375,13 @@ Page({
         // });
         // this.formatSubmitData(tempData, 'borrowBillList');
         // this.formatSubmitData(this.data.submitData.billFilesObj, 'billFiles');
-        this.handleSubmitData(this.data.submitData)
-        return
         this.addLoading();
         var url = '';
 
         if (this.data.type === 'add') {
-            url = app.globalData.url + 'reimbursementBillController.do?doAdd';
+            url = app.globalData.url + 'reimbursementBillController.do?doAddByJson';
         } else {
-            url = app.globalData.url + 'reimbursementBillController.do?doUpdate&id=' + this.data.billId;
+            url = app.globalData.url + 'reimbursementBillController.do?doUpdateByJson&id=' + this.data.billId;
         }
         // url上补充外币
         if (this.data.submitData.isMultiCurrency) {
@@ -389,7 +392,8 @@ Page({
             hideLoading: this.hideLoading,
             url,
             method: 'POST',
-            data: this.data.submitData,
+            headers:  {'Content-Type': 'application/json;charset=utf-8'},
+            data: this.handleSubmitData(this.data.submitData),
             success: res => {
                 if (res.data && typeof res.data == 'string') {
                     getErrorMessage(res.data);
@@ -2210,7 +2214,7 @@ Page({
     },
 
     generateExtraList(conf) {
-        var tempData = clone(conf);
+        var tempData = clone(JSON.parse(conf));
         var array = [];
         var extraMessage = [];
         tempData.name.forEach((item, index) => {
