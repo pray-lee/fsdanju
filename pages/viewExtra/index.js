@@ -44,7 +44,7 @@ Page({
   },
 
   generateExtraList(conf) {
-    var tempData = clone(conf);
+    var tempData = clone(JSON.parse(conf));
     var array = [];
     tempData.name.forEach((item, index) => {
       var obj = {};

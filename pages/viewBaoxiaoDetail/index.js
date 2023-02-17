@@ -45,7 +45,7 @@ Page({
         const extraMessage = this.data.baoxiaoDetail.extraMessage;
         const subjectExtraConf = this.data.baoxiaoDetail.subjectExtraConf;
         console.log(subjectExtraConf, 'subjectExtraConf');
-        const applicationAmount = this.data.baoxiaoDetail.applicationAmount;
+        const applicationAmount = this.data.baoxiaoDetail.originApplicationAmount ? this.data.baoxiaoDetail.originApplicationAmount : this.data.baoxiaoDetail.applicationAmount;
         tt.setStorage({
             key: 'extraObj',
             data: {
