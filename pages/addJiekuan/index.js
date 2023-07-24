@@ -293,7 +293,10 @@ Page({
 
 
     bindObjPickerChange(e) {
+        console.log(e)
+        debugger
         var name = e.currentTarget.dataset.name;
+        console.log(name, 'name')
         var listName = e.currentTarget.dataset.list;
         var value = e.detail.value;
         var index = e.currentTarget.dataset.index; // 设置当前框的值
@@ -307,6 +310,7 @@ Page({
                 }
             });
         } else {
+            debugger
             this.setData({
                 [index]: e.detail.value,
                 submitData: {

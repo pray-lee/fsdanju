@@ -57,7 +57,7 @@
                 <view class="form-row">
                     <block tt:if="{{submitData.incomeBankAccount}}">
                         <view class="form-row-content incomeBankAccount">
-                            <picker class="picker-style" onChange="bindObjPickerChange" value="{{incomeBankIndex}}"
+                            <picker class="picker-style" bindchange="bindObjPickerChange" value="{{incomeBankIndex}}"
                                 range="{{incomeBankList}}" range-key="bankName" data-name="incomeBankName"
                                 data-list="incomeBankList" data-index="incomeBankIndex">
                                 <view class="row-extra">{{incomeBankList[incomeBankIndex].bankAccount}}</view>
