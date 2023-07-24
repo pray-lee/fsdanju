@@ -293,8 +293,6 @@ Page({
 
 
     bindObjPickerChange(e) {
-        console.log(e)
-        debugger
         var name = e.currentTarget.dataset.name;
         console.log(name, 'name')
         var listName = e.currentTarget.dataset.list;
@@ -310,7 +308,6 @@ Page({
                 }
             });
         } else {
-            debugger
             this.setData({
                 [index]: e.detail.value,
                 submitData: {
